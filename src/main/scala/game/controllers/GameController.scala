@@ -48,7 +48,7 @@ class GameController extends Controller {
   }
 
   def onPauseClicked(): Unit = {
-    (new MainMenuController).becomeActive()
+    MainMenuController.becomeActive()
   }
 
   def getButton(x: Int, y: Int): JButton = panel.buttons(y * 4 + x)
@@ -67,4 +67,10 @@ class GameController extends Controller {
                           1024 -> new Color(244, 240, 55),
                           2048 -> new Color(25, 245, 115),
                           4096 -> new Color(245, 70, 55))
+}
+
+object GameController {
+  def becomeActive(): Unit = {
+    (new MainMenuController).becomeActive()
+  }
 }

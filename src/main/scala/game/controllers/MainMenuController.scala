@@ -20,3 +20,9 @@ class MainMenuController extends Controller {
     panel.exitButton.addActionListener(onExitClicked _)
   }
 }
+
+object MainMenuController {
+  def becomeActive(): Unit = {
+    GameController.becomeActive()
+  }
+}

@@ -14,7 +14,11 @@ trait Controller {
     panel.addComponentsOnSelf()
     bindPanelWithSelf()
     initializeModel()
-    Window.changePanelTo(panel)
+
+    if (Window.prevPanel != null) Window.remove(Window.prevPanel)
+    Window.add(panel)
+    Window.prevPanel = panel
+    Window.pack()
   }
 
 }
