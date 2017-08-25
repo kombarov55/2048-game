@@ -12,4 +12,8 @@ object Implicits {
     override def actionPerformed(e: ActionEvent) = fun()
   }
 
+  implicit def Function2Runnable(fun: () => Any): Runnable = new Runnable {
+    override def run() = fun()
+  }
+
 }

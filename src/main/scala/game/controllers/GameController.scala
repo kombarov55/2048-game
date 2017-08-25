@@ -5,7 +5,7 @@ import javax.swing.JButton
 
 import game.Implicits.Function2ActionListener
 import game.StaticData
-import game.model.{Command, Field}
+import game.model.{Cell, Command, Field}
 import game.swing.{GamePanel, KeyboardListener}
 
 class GameController extends Controller {
@@ -36,8 +36,8 @@ class GameController extends Controller {
     }
   }
 
-  def renderCells(): Unit = {
-    for (cell <- StaticData.field.rows.flatten) {
+  def renderCells(changes: Seq[Cell] = StaticData.field.rows.flatten.toSeq): Unit = {
+    for (cell <- changes) {
       val button = getButton(cell.x, cell.y)
       button.setText(cell.score match {
         case 0 => ""

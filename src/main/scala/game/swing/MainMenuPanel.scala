@@ -1,7 +1,7 @@
 package game.swing
 
 import java.awt.Dimension
-import javax.swing.JButton
+import javax.swing.{ImageIcon, JButton, JLabel}
 
 class MainMenuPanel() extends Panel {
 
