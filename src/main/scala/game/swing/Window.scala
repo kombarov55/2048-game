@@ -8,6 +8,7 @@ object Window extends JFrame {
   var prevPanel: Panel = _
 
   setVisible(true)
+  setResizable(false)
   setPreferredSize(new Dimension(500, 600))
   setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
   pack()
