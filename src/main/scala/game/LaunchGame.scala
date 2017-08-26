@@ -2,7 +2,7 @@ package game
 
 import game.controllers.MainMenuController
 
-object Launcher extends App {
+object LaunchGame extends App {
 
   MainMenuController.becomeActive()
 
