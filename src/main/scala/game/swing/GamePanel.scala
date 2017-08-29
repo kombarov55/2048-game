@@ -19,7 +19,7 @@ class GamePanel extends Panel {
     grid.add(button)
 
   val scoreLabel = new JLabel("0")
-  scoreLabel.setFont(new Font("Arial", Font.ITALIC, 32))
+  scoreLabel.setFont(new Font("Arial", Font.BOLD, 64))
 
   val pauseButton = new JButton("Пауза")
 

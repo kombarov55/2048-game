@@ -2,10 +2,9 @@ package game.swing
 
 import java.awt.Font
 import javax.swing.border.TitledBorder
-import javax.swing.{BorderFactory, DefaultListModel, JButton, JList, JScrollPane}
+import javax.swing.{BorderFactory, DefaultListModel, JButton, JList}
 
-import game.Implicits.Function2ActionListener
-
+//  Это можно переписать по border-layout
 class MultiplayerPanel extends Panel {
 
   val participantList = new DefaultListModel[String]
@@ -27,9 +26,7 @@ class MultiplayerPanel extends Panel {
 
   watchButton.setBounds(100, 350, 300, 50)
   versusButton.setBounds(100, 400, 300, 50)
-
-//  watchButton.addActionListener()
-
+  
   override def addComponentsOnSelf(): Unit = {
     setLayout(null)
 

@@ -7,9 +7,10 @@ class MainMenuController extends Controller {
 
   val panel = new MainMenuPanel
 
-  override def initializeModel(): Unit = {
+  override def bindPanelWithSelf(): Unit = {
     panel.playButton.addActionListener((new GameController).becomeActive _)
     panel.multiplayerButton.addActionListener((new MultiplayerController).becomeActive _)
+    panel.settingsButton.addActionListener((new SettingsController).becomeActive _)
     panel.exitButton.addActionListener(() => println("exit not implemented yet.."))
   }
 }
