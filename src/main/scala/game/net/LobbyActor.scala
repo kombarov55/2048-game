@@ -1,32 +1,36 @@
 package game.net
 
-import java.net.Socket
+import java.net.{InetAddress, Socket}
 
 import akka.actor.{Actor, ActorRef, Props}
 import game.StaticData
 import game.controllers.MultiplayerController
-import game.net.LobbyActor.ConnectTo
-import game.net.Server.Handshake
+import game.net.Server.{AllPlayersRequest, AllPlayersResponse, ConnectionResponse, Handshake}
 import game.net.SocketWrapper.Send
 
-class LobbyActor(multiplayerController: MultiplayerController) extends Actor {
+class LobbyActor(address: String, multiplayerController: MultiplayerController) extends Actor {
 
   var socketWrapper: ActorRef = _
 
   override def receive: Receive = {
-    case ConnectTo(address) => connect(address)
+    case ConnectionResponse(address) => onConnectionResponse(address)
+    case AllPlayersResponse(players) => onPlayersReceived(players)
+    case x: Any => println(x)
   }
 
-  def connect(address: String): Unit = {
+  override def preStart(): Unit = {
     val socket = new Socket(address, 6666)
     socketWrapper = StaticData.system.actorOf(Props(new SocketWrapper(socket)))
     socketWrapper ! "start"
     socketWrapper ! Send(Handshake(StaticData.localAddress, StaticData.userName))
   }
 
-}
+  def onPlayersReceived(players: Seq[Player]): Unit = {
+    println(players)
+  }
 
-object LobbyActor {
-  case class ConnectTo(address: String)
+  def onConnectionResponse(address: InetAddress): Unit = {
+    StaticData.localAddress = address
+    socketWrapper ! Send(AllPlayersRequest(StaticData.localAddress))
+  }
 }
-

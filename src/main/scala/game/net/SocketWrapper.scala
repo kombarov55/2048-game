@@ -17,7 +17,7 @@ class SocketWrapper(socket: Socket) extends Actor {
   override def receive: Receive = {
     case Send(obj) => sendToTheOtherEnd(obj)
     case ToBeReceived(obj) => onReceived(obj)
-    case x: Any => println(x)
+    case x: Any => println("unknown message: " + x)
   }
 
   def sendToTheOtherEnd(obj: Serializable): Unit = {

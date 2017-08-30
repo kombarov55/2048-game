@@ -12,7 +12,7 @@ object StaticData {
   var userName: String = "Безымянный"
 
   var address: String = InetAddress.getLocalHost.getHostAddress
-  val localAddress = InetAddress.getLocalHost.getHostAddress
+  var localAddress: InetAddress = _
 
   var myActor: ActorRef = _
   var system = ActorSystem("my-system")

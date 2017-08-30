@@ -1,21 +1,22 @@
 package game.net
 
-import java.net.ServerSocket
+import java.net.{InetAddress, ServerSocket}
 
 import akka.actor.{Actor, Props}
 import game.Implicits.{Function2Runnable, RichOption}
-import game.net.Server.{Handshake, Start}
-
-import scala.collection.mutable
+import game.net.Server.{AllPlayersRequest, AllPlayersResponse, ConnectionResponse, Handshake, Start}
+import game.net.SocketWrapper.Send
 
 class Server(port: Int) extends Actor {
 
   val serverSocket = new ServerSocket(port)
 
-  var players = mutable.Buffer[Player]()
+  var players = List[Player]()
+
 
   override def receive: Receive = {
-    case Handshake(address, name) => updatePlayer(address, name)
+    case Handshake(address, name) => onHandshake(address, name)
+    case AllPlayersRequest(callbackIp) => sendAllPlayersTo(callbackIp)
     case Start => launchJoiner()
   }
 
@@ -24,20 +25,38 @@ class Server(port: Int) extends Actor {
       while (true) {
         val socket = serverSocket.accept()
         val socketOnServerSide = context.actorOf(Props(new SocketWrapper(socket)))
-        players += Player(socket.getRemoteSocketAddress.toString, socketOnServerSide)
+        players = Player(socket.getInetAddress, socketOnServerSide) :: players
+        println("all players: " + players)
+
+        socketOnServerSide ! Send(ConnectionResponse(socket.getInetAddress))
       }
     }).start()
   }
 
-  def updatePlayer(address: String, name: String): Unit = {
+  def onHandshake(address: InetAddress, name: String): Unit = {
     players
     .find(_.address == address)
-    .ifPresent { player => player.name = name }
+    .ifPresent { player =>
+      player.name = name
+    }
+    .otherwise { println("Игрок не найден") }
   }
+
+  def sendAllPlayersTo(address: InetAddress): Unit = {
+    players
+    .find(_.address == address)
+    .ifPresent { player =>
+      val socketRef = player.socketRef
+      socketRef ! Send(AllPlayersResponse(players))
+    }
+  }
+
 }
 
 object Server {
-  case class Handshake(address: String, name: String)
-  case class RequestAllNames(callbackIp: String) extends Serializable
+  case class ConnectionResponse(yourAddress: InetAddress)
+  case class Handshake(address: InetAddress, name: String)
+  case class AllPlayersRequest(callbackIp: InetAddress = null) extends Serializable
+  case class AllPlayersResponse(players: Seq[Player]) extends Serializable
   case class Start()
 }

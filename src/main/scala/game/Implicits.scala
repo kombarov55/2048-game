@@ -17,10 +17,22 @@ object Implicits {
   }
 
   implicit class RichOption[T](option: Option[T]) {
-    def ifPresent(fun: (T) => Unit): Unit = {
+
+    def ifPresent(fun: (T) => Unit): RichOption[T] = {
       if (option.isDefined)
         fun(option.get)
+      this
     }
+
+    def otherwise(unit: Unit): Unit = {
+      if (option.isEmpty) {
+        unit
+      }
+    }
+
+    def otherwise(fun: () => Unit): Unit = otherwise(fun())
+
+
   }
 
 }
