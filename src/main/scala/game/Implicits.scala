@@ -16,4 +16,11 @@ object Implicits {
     override def run() = fun()
   }
 
+  implicit class RichOption[T](option: Option[T]) {
+    def ifPresent(fun: (T) => Unit): Unit = {
+      if (option.isDefined)
+        fun(option.get)
+    }
+  }
+
 }

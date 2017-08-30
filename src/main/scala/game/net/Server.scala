@@ -2,9 +2,9 @@ package game.net
 
 import java.net.ServerSocket
 
-import game.Implicits.Function2Runnable
-import akka.actor.{Actor, ActorRef, Props}
-import game.net.messages.{DeltaToConsume, ProducedDelta}
+import akka.actor.{Actor, Props}
+import game.Implicits.{Function2Runnable, RichOption}
+import game.net.Server.Handshake
 
 import scala.collection.mutable
 
@@ -12,10 +12,10 @@ class Server(port: Int) extends Actor {
 
   val serverSocket = new ServerSocket(port)
 
-  val recipients = mutable.Buffer[ActorRef]()
+  var players = mutable.Buffer[Player]()
 
   override def receive: Receive = {
-    case ProducedDelta(score, cells) => broadcast(DeltaToConsume(score, cells))
+    case Handshake(address, name) =>
     case "start" => launchJoiner()
   }
 
@@ -23,14 +23,22 @@ class Server(port: Int) extends Actor {
     new Thread({ () =>
       while (true) {
         val socket = serverSocket.accept()
-        recipients += context.actorOf(Props(new SocketWrapperOnServer(socket)), name = s"serverListener${recipients.size}")
+        val socketOnServerSide = context.actorOf(Props(new SocketWrapperOnServer(socket)))
+        players += Player(socket.getRemoteSocketAddress.toString, socketOnServerSide)
+        println(socket.getRemoteSocketAddress + " connected")
       }
     }).start()
   }
 
-  def broadcast(delta: DeltaToConsume): Unit = {
-    for (recipient <- recipients) {
-      recipient ! delta
-    }
+  def updatePlayer(address: String, name: String): Unit = {
+    players
+    .find(_.address == address)
+    .ifPresent { player => player.name = name }
   }
+
+}
+
+object Server {
+  case class Handshake(address: String, name: String)
+  case class RequestAllNames(callbackIp: String) extends Serializable
 }
