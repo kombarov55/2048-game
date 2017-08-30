@@ -4,7 +4,7 @@ import java.net.ServerSocket
 
 import akka.actor.{Actor, Props}
 import game.Implicits.{Function2Runnable, RichOption}
-import game.net.Server.Handshake
+import game.net.Server.{Handshake, Start}
 
 import scala.collection.mutable
 
@@ -15,17 +15,16 @@ class Server(port: Int) extends Actor {
   var players = mutable.Buffer[Player]()
 
   override def receive: Receive = {
-    case Handshake(address, name) =>
-    case "start" => launchJoiner()
+    case Handshake(address, name) => updatePlayer(address, name)
+    case Start => launchJoiner()
   }
 
   def launchJoiner(): Unit = {
     new Thread({ () =>
       while (true) {
         val socket = serverSocket.accept()
-        val socketOnServerSide = context.actorOf(Props(new SocketWrapperOnServer(socket)))
+        val socketOnServerSide = context.actorOf(Props(new SocketWrapper(socket)))
         players += Player(socket.getRemoteSocketAddress.toString, socketOnServerSide)
-        println(socket.getRemoteSocketAddress + " connected")
       }
     }).start()
   }
@@ -35,10 +34,10 @@ class Server(port: Int) extends Actor {
     .find(_.address == address)
     .ifPresent { player => player.name = name }
   }
-
 }
 
 object Server {
   case class Handshake(address: String, name: String)
   case class RequestAllNames(callbackIp: String) extends Serializable
+  case class Start()
 }

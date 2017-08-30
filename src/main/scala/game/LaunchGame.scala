@@ -1,9 +1,14 @@
 package game
 
-import game.controllers.MainMenuController
+import akka.actor.Props
+import game.net.LobbyActor
+import game.net.LobbyActor.ConnectTo
 
 object LaunchGame extends App {
 
-  MainMenuController.becomeActive()
+//  MainMenuController.becomeActive()
+
+  val lobbyActor = StaticData.system.actorOf(Props(new LobbyActor(null)))
+  lobbyActor ! ConnectTo("localhost")
 
 }

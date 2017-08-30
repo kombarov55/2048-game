@@ -6,6 +6,8 @@ import akka.actor.{Actor, ActorRef, Props}
 import game.StaticData
 import game.controllers.MultiplayerController
 import game.net.LobbyActor.ConnectTo
+import game.net.Server.Handshake
+import game.net.SocketWrapper.Send
 
 class LobbyActor(multiplayerController: MultiplayerController) extends Actor {
 
@@ -17,7 +19,9 @@ class LobbyActor(multiplayerController: MultiplayerController) extends Actor {
 
   def connect(address: String): Unit = {
     val socket = new Socket(address, 6666)
-    socketWrapper = StaticData.system.actorOf(Props(new SocketWrapperOnClient(socket)))
+    socketWrapper = StaticData.system.actorOf(Props(new SocketWrapper(socket)))
+    socketWrapper ! "start"
+    socketWrapper ! Send(Handshake(StaticData.localAddress, StaticData.userName))
   }
 
 }

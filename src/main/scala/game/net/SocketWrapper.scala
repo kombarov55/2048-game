@@ -3,27 +3,33 @@ package game.net
 import java.io.{ObjectInputStream, ObjectOutputStream, Serializable}
 import java.net.Socket
 
-import akka.actor.{Actor, ActorSystem}
+import akka.actor.Actor
 import game.Implicits.Function2Runnable
-import game.net.messages.{DeltaToConsume, ProducedDelta}
+import game.net.SocketWrapper.{Send, ToBeReceived}
 
-abstract class SocketWrapper(socket: Socket) extends Actor {
-
-  launchListener()
-
-  def onDeltaReceived(delta: DeltaToConsume): Unit
-  def sendDelta(delta: ProducedDelta): Unit
-
-  override def receive: Receive = {
-    case x: DeltaToConsume => onDeltaReceived(x)
-    case x: ProducedDelta => sendDelta(x)
-  }
-
-  val system = ActorSystem("mySystem")
+class SocketWrapper(socket: Socket) extends Actor {
 
   val toSocket = new ObjectOutputStream(socket.getOutputStream)
   val fromSocket = new ObjectInputStream(socket.getInputStream)
 
+  launchListener()
+
+  override def receive: Receive = {
+    case Send(obj) => sendToTheOtherEnd(obj)
+    case ToBeReceived(obj) => onReceived(obj)
+    case x: Any => println(x)
+  }
+
+  def sendToTheOtherEnd(obj: Serializable): Unit = {
+    toSocket.writeObject(ToBeReceived(obj))
+    toSocket.flush()
+    println("sent: " + obj)
+  }
+
+  def onReceived(obj: Serializable): Unit = {
+    println("received: " + obj)
+    context.parent ! obj
+  }
 
   def launchListener(): Unit = {
     new Thread(() => {
@@ -32,9 +38,9 @@ abstract class SocketWrapper(socket: Socket) extends Actor {
       }
     }).start()
   }
+}
 
-  def sendToTheOtherEnd(obj: Serializable): Unit = {
-    toSocket.writeObject(obj)
-    toSocket.flush()
-  }
+object SocketWrapper {
+  case class Send(serializable: Serializable) extends Serializable
+  case class ToBeReceived(serializable: Serializable) extends Serializable
 }

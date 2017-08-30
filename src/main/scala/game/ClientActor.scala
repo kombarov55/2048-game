@@ -5,7 +5,7 @@ import java.net.Socket
 import akka.actor.{Actor, ActorRef, Props}
 import game.controllers.GameController
 import game.model.Cell
-import game.net.SocketWrapperOnClient
+import game.net.SocketWrapper
 import game.net.messages.{DeltaToConsume, ProducedDelta}
 
 class ClientActor(gameController: GameController) extends Actor {
@@ -26,7 +26,7 @@ class ClientActor(gameController: GameController) extends Actor {
 
   def connect(address: String) = {
     val socket = new Socket(address, 6666)
-    socketWrapper = context.actorOf(Props(new SocketWrapperOnClient(socket)))
+    socketWrapper = context.actorOf(Props(new SocketWrapper(socket)))
   }
 }
 
