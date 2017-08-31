@@ -1,7 +1,7 @@
 package game.net
 
-import java.net.InetAddress
+import java.net.SocketAddress
 
 import akka.actor.ActorRef
 
-case class Player(address: InetAddress, socketRef: ActorRef, var name: String = "") extends Serializable
+case class Player(address: SocketAddress, socketRef: ActorRef, var name: String = "") extends Serializable
