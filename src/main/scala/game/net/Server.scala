@@ -2,8 +2,8 @@ package game.net
 
 import java.net.{ServerSocket, SocketAddress}
 
-import akka.actor.{Actor, Props}
-import game.Implicits.{Function2Runnable, RichOption}
+import akka.actor.{Actor, ActorRef, Props}
+import game.Implicits.Function2Runnable
 import game.net.Server.{AllPlayersRequest, AllPlayersResponse, Handshake, Start}
 import game.net.SocketWrapper.Send
 
@@ -12,6 +12,8 @@ class Server(port: Int) extends Actor {
   val serverSocket = new ServerSocket(port)
 
   var players = List[Player]()
+
+  var playersToSockets = Map[Player, ActorRef]()
 
 
   override def receive: Receive = {
@@ -25,32 +27,29 @@ class Server(port: Int) extends Actor {
       while (true) {
         val socket = serverSocket.accept()
         val socketOnServerSide = context.actorOf(Props(new SocketWrapper(socket)))
-        players = Player(socket.getRemoteSocketAddress, socketOnServerSide) :: players
-        println("all players: " + players)
+        playersToSockets += Player(socket.getRemoteSocketAddress) -> socketOnServerSide
       }
     }).start()
   }
 
   def onHandshake(address: SocketAddress, name: String): Unit = {
-    val player = players.find(_.address == address)
-    if (player.isDefined) {
-      player.get.name = name
+    val optionPair = playersToSockets.find { pair => pair._1.address == address }
+    if (optionPair.isDefined) {
+      optionPair.get._1.name = name
     } else {
-      println("Игрок не найден..")
+      println("Игрок не найден при приветствии")
     }
   }
 
   def sendAllPlayersTo(address: SocketAddress): Unit = {
-    players
-    .find(_.address == address)
-    .ifPresent { player =>
-      val socketRef = player.socketRef
-      socketRef ! Send(AllPlayersResponse(players))
-    }.otherwise {
-      println("Не кому отправлять список всех игроков..")
+    val optionPair = playersToSockets.find { pair => pair._1.address == address }
+    if (optionPair.isDefined) {
+      val players = playersToSockets.keys
+      optionPair.get._2 ! Send(AllPlayersResponse(players.toSeq))
+    } else {
+      println("Некому отправлять игроков, исключение..")
     }
   }
-
 }
 
 object Server {
