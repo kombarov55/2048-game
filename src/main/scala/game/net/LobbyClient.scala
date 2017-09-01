@@ -7,6 +7,8 @@ import akka.io.Tcp.{Connect, Connected, Received, Register, Write}
 import akka.io.{IO, Tcp}
 import akka.util.ByteString
 import game.StaticData
+import game.net.LobbyClient.SendToTheOtherEnd
+import game.net.LobbyHandler.AllPlayers
 
 /**
   * Тот, кто будет выполнять обращения к серверу, когда пользователь в лобби. Должен:
@@ -29,19 +31,36 @@ class LobbyClient(serverAddress: InetSocketAddress) extends Actor {
       connection = sender()
       connection ! Register(self)
 
-      connection ! Server.AddPlayer(StaticData.userName, StaticData.localSocketAddress)
 
     case Received(data) =>
       println("client received message, now deserializing..")
       val deserializedMessage = Serializer.deserialize(data.toArray)
       self ! deserializedMessage
 
+    case request @ AllPlayers(players) if players == null => self forward SendToTheOtherEnd(request)
+
+    case AllPlayers(players) if players != null => onPlayerListReceived(players)
+
     case str: String => println("client: received string: " + str)
 
-    case data: ByteString => connection ! Write(data)
+    case SendToTheOtherEnd(data) =>
+      val serializedData = Serializer.serialize(data)
+      println("client: serialized " + data)
+      connection ! Write(ByteString(serializedData))
+
+    case other: Any => println("client: received unknown message: " + other)
+  }
+
+  def onPlayerListReceived(players: Seq[Player]): Unit = {
+    for (player <- players) {
+      println(player)
+    }
   }
 }
 
 object LobbyClient {
   def props(ip: String, port: Int): Props = Props(new LobbyClient(new InetSocketAddress(ip, port)))
+
+  private case class SendToTheOtherEnd(data: Any)
+
 }
