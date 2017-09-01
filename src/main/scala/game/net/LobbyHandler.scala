@@ -1,11 +1,10 @@
 package game.net
 
-import java.net.InetSocketAddress
-
 import akka.actor.Actor
 import akka.io.Tcp.{Received, Write}
 import akka.util.ByteString
-import game.net.LobbyHandler.{AllPlayers, SendToTheOtherEnd}
+import game.net.LobbyHandler.SendToTheOtherEnd
+import game.net.LobbyProtocol.{AddPlayer, AllPlayers}
 
 class LobbyHandler() extends Actor {
 
@@ -15,9 +14,12 @@ class LobbyHandler() extends Actor {
       println("handler: deserialized=" + deserializedData)
       self forward deserializedData
 
+    case AddPlayer(name, address) =>
+      Server.players = Player(name, address) :: Server.players
     case AllPlayers(players) if players == null =>
       println("handler: received message about players. now sending")
       self forward SendToTheOtherEnd(Server.players)
+
     case str: String => self forward SendToTheOtherEnd("echo: " + str)
 
     case SendToTheOtherEnd(anything) =>
@@ -34,9 +36,4 @@ object LobbyHandler {
 
   private case class SendToTheOtherEnd(anything: Any) extends Serializable
 
-  case class AddPlayer(name: String, address: InetSocketAddress)
-
-  case class RemovePlayer(address: InetSocketAddress)
-
-  case class AllPlayers(players: Seq[Player] = null)
 }

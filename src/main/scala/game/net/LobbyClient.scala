@@ -8,13 +8,10 @@ import akka.io.{IO, Tcp}
 import akka.util.ByteString
 import game.StaticData
 import game.net.LobbyClient.SendToTheOtherEnd
-import game.net.LobbyHandler.AllPlayers
+import game.net.LobbyProtocol.{AddPlayer, AllPlayers}
 
 /**
-  * Тот, кто будет выполнять обращения к серверу, когда пользователь в лобби. Должен:
-  * 1) Регистрировать себя у сервера
-  * 2) Запрашивать список всех присутствующих
-  * 3) При выходе посылать запрос на удаления себя из того списка
+  * В конструктор должна передаться лямба, что сделать после настройки. Параметр в ней - self.
   */
 class LobbyClient(serverAddress: InetSocketAddress) extends Actor {
 
@@ -26,10 +23,10 @@ class LobbyClient(serverAddress: InetSocketAddress) extends Actor {
 
   override def receive: Receive = {
     case Connected(_, localAddress) =>
-
       StaticData.localSocketAddress = localAddress
       connection = sender()
       connection ! Register(self)
+      self ! SendToTheOtherEnd(AddPlayer("Николай", localAddress))
 
 
     case Received(data) =>
@@ -40,8 +37,6 @@ class LobbyClient(serverAddress: InetSocketAddress) extends Actor {
     case request @ AllPlayers(players) if players == null => self forward SendToTheOtherEnd(request)
 
     case AllPlayers(players) if players != null => onPlayerListReceived(players)
-
-    case str: String => println("client: received string: " + str)
 
     case SendToTheOtherEnd(data) =>
       val serializedData = Serializer.serialize(data)

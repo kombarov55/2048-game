@@ -18,12 +18,6 @@ class Server extends Actor {
 
   override def preStart(): Unit = {
     IO(Tcp)(StaticData.system) ! Bind(self, new InetSocketAddress("localhost", 6666))
-    Server.players = Player(new InetSocketAddress("localhost", 1111), "Николай") :: Server.players
-    Server.players = Player(new InetSocketAddress("localhost", 1111), "Николай") :: Server.players
-    Server.players = Player(new InetSocketAddress("localhost", 1111), "Николай") :: Server.players
-    Server.players = Player(new InetSocketAddress("localhost", 1111), "Николай") :: Server.players
-    Server.players = Player(new InetSocketAddress("localhost", 1111), "Николай") :: Server.players
-    Server.players = Player(new InetSocketAddress("localhost", 1111), "Николай") :: Server.players
   }
 
   override def receive: Receive = {
