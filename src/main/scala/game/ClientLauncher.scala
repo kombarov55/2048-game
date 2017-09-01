@@ -14,7 +14,7 @@ object ClientLauncher extends App {
 
   while (true) {
     val line = StdIn.readLine()
-    client ! AllPlayers(null)
+    client ! AllPlayers
   }
 
 }

@@ -34,7 +34,7 @@ class LobbyClient(serverAddress: InetSocketAddress) extends Actor {
       val deserializedMessage = Serializer.deserialize(data.toArray)
       self ! deserializedMessage
 
-    case request @ AllPlayers(players) if players == null => self forward SendToTheOtherEnd(request)
+    case request @ AllPlayers => self forward SendToTheOtherEnd(request)
 
     case AllPlayers(players) if players != null => onPlayerListReceived(players)
 

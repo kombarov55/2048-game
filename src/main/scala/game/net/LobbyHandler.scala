@@ -16,7 +16,7 @@ class LobbyHandler() extends Actor {
 
     case AddPlayer(name, address) =>
       Server.players = Player(name, address) :: Server.players
-    case AllPlayers(players) if players == null =>
+    case AllPlayers =>
       println("handler: received message about players. now sending")
       self forward SendToTheOtherEnd(Server.players)
 
