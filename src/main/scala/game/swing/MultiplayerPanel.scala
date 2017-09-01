@@ -16,11 +16,6 @@ class MultiplayerPanel extends Panel {
   border.setTitleJustification(TitledBorder.CENTER)
   jlist.setBorder(border)
 
-  participantList.addElement("local")
-  participantList.addElement("local")
-  participantList.addElement("local")
-  participantList.addElement("local")
-
   val watchButton = new JButton("Смотреть")
   val versusButton = new JButton("Играть 1х1")
 

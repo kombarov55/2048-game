@@ -1,65 +1,50 @@
 package game.net
 
-import java.net.{ServerSocket, SocketAddress}
+import java.net.InetSocketAddress
 
-import akka.actor.{Actor, ActorRef, Props}
-import game.Implicits.Function2Runnable
-import game.net.Server.{AllPlayersRequest, AllPlayersResponse, Handshake, Start}
-import game.net.SocketWrapper.Send
+import akka.actor.{Actor, Props}
+import akka.io.Tcp.{Bind, Bound, Command, CommandFailed, Connected, Register}
+import akka.io.{IO, Tcp}
+import game.StaticData
 
-class Server(port: Int) extends Actor {
+/**
+  * Хранит списки игроков и handler-ов
+  * Операции:
+  * 1) Записать игрока
+  * 2) Убрать игрока
+  * 3) Получить список всех игроков
+  */
+class Server extends Actor {
 
-  val serverSocket = new ServerSocket(port)
-
-  var players = List[Player]()
-
-  var playersToSockets = Map[Player, ActorRef]()
-
+  override def preStart(): Unit = {
+    IO(Tcp)(StaticData.system) ! Bind(self, new InetSocketAddress("localhost", 6666))
+    Server.players = Player(new InetSocketAddress("localhost", 1111), "Николай") :: Server.players
+    Server.players = Player(new InetSocketAddress("localhost", 1111), "Николай") :: Server.players
+    Server.players = Player(new InetSocketAddress("localhost", 1111), "Николай") :: Server.players
+    Server.players = Player(new InetSocketAddress("localhost", 1111), "Николай") :: Server.players
+    Server.players = Player(new InetSocketAddress("localhost", 1111), "Николай") :: Server.players
+    Server.players = Player(new InetSocketAddress("localhost", 1111), "Николай") :: Server.players
+  }
 
   override def receive: Receive = {
-    case Handshake(address, name) => onHandshake(address, name)
-    case AllPlayersRequest(callbackIp) => sendAllPlayersTo(callbackIp)
-    case Start => launchJoiner()
-  }
+    case Bound(localAddress) => println("I was bound at " + localAddress)
+    case CommandFailed(cmd: Command) => println("bounding failed..")
 
-  def launchJoiner(): Unit = {
-    new Thread({ () =>
-      while (true) {
-        val socket = serverSocket.accept()
-        val socketOnServerSide = context.actorOf(Props(new SocketWrapper(socket)), "serverSocket")
-        playersToSockets += Player(socket.getRemoteSocketAddress) -> socketOnServerSide
-      }
-    }).start()
-  }
-
-  def onHandshake(address: SocketAddress, name: String): Unit = {
-    val optionPair = playersToSockets.find { pair => pair._1.address == address }
-    if (optionPair.isDefined) {
-      optionPair.get._1.name = name
-    } else {
-      println("Игрок не найден при приветствии")
-    }
-  }
-
-  def sendAllPlayersTo(address: SocketAddress): Unit = {
-    val optionPair = playersToSockets.find { pair => pair._1.address == address }
-    if (optionPair.isDefined) {
-      val players = playersToSockets.keys
-      optionPair.get._2 ! Send(AllPlayersResponse(players.toSeq))
-    } else {
-      println("Некому отправлять игроков")
-    }
+    case Connected(remote, local) =>
+      println(s"someone connected. remote:local = $remote:$local")
+      val handler = context.actorOf(Props(new LobbyHandler()), "handler")
+      sender() ! Register(handler)
   }
 }
 
 object Server {
 
-  case class Handshake(address: SocketAddress, name: String)
+  var players = List.empty[Player]
 
-  case class AllPlayersRequest(callbackIp: SocketAddress = null) extends Serializable
+  case class AddPlayer(name: String, address: InetSocketAddress)
 
-  case class AllPlayersResponse(players: Seq[Player]) extends Serializable
+  case class RemovePlayer(address: InetSocketAddress)
 
-  case class Start()
+  case class AllPlayers(players: Seq[Player] = null)
 
 }

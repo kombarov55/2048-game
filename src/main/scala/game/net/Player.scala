@@ -1,5 +1,5 @@
 package game.net
 
-import java.net.SocketAddress
+import java.net.InetSocketAddress
 
-case class Player(address: SocketAddress, var name: String = "") extends Serializable
+case class Player(address: InetSocketAddress, var name: String = "") extends Serializable
