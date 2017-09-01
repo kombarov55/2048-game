@@ -1,11 +1,24 @@
 package game.controllers
-import game.swing.{MultiplayerPanel, Panel}
+import akka.actor.Props
+import game.StaticData
+import game.net.Server.AllPlayersRequest
+import game.net.{LobbyActor, Player}
+import game.swing.MultiplayerPanel
 
 class MultiplayerController extends Controller {
 
-  override val panel: Panel = new MultiplayerPanel
+  var lobbyClient = StaticData.system.actorOf(Props(new LobbyActor(StaticData.address, this)), "lobbyClient")
 
-  override def initializeModel(): Unit = {
-//    StaticData.myActor = StaticData.system.actorOf()
+  override val panel = new MultiplayerPanel
+
+  override def bindPanelWithSelf(): Unit = {
+    lobbyClient ! AllPlayersRequest
+
+  }
+
+  def onPlayersReceived(players: Seq[Player]): Unit = {
+    for (player <- players) {
+      panel.participantList.addElement(player.name)
+    }
   }
 }

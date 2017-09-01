@@ -2,7 +2,7 @@ package game
 
 import java.net.{InetAddress, SocketAddress}
 
-import akka.actor.{ActorRef, ActorSystem}
+import akka.actor.ActorSystem
 import game.model.Field
 
 object StaticData {
@@ -16,6 +16,5 @@ object StaticData {
 
   var localSocketAddress: SocketAddress = _
 
-  var myActor: ActorRef = _
   var system = ActorSystem("my-system")
 }

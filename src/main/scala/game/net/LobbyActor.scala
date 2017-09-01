@@ -15,7 +15,7 @@ class LobbyActor(address: String, multiplayerController: MultiplayerController) 
   override def preStart(): Unit = {
     val socket = new Socket(address, 6666)
     StaticData.localSocketAddress = socket.getLocalSocketAddress
-    socketWrapper = StaticData.system.actorOf(Props(new SocketWrapper(socket)))
+    socketWrapper = context.actorOf(Props(new SocketWrapper(socket)), "clientSocket")
     socketWrapper ! Send(Handshake(StaticData.localSocketAddress, StaticData.userName))
   }
 
@@ -26,7 +26,7 @@ class LobbyActor(address: String, multiplayerController: MultiplayerController) 
   }
 
   def onPlayersReceived(players: Seq[Player]): Unit = {
-    println(players)
+    multiplayerController.onPlayersReceived(players)
   }
 
 }

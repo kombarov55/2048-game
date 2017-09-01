@@ -10,7 +10,7 @@ trait Controller {
 
   def bindPanelWithSelf(): Unit = {}
 
-  def becomeActive(): Unit = {
+  final def becomeActive(): Unit = {
     panel.addComponentsOnSelf()
     bindPanelWithSelf()
     initializeModel()

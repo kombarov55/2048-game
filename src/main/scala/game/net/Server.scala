@@ -26,7 +26,7 @@ class Server(port: Int) extends Actor {
     new Thread({ () =>
       while (true) {
         val socket = serverSocket.accept()
-        val socketOnServerSide = context.actorOf(Props(new SocketWrapper(socket)))
+        val socketOnServerSide = context.actorOf(Props(new SocketWrapper(socket)), "serverSocket")
         playersToSockets += Player(socket.getRemoteSocketAddress) -> socketOnServerSide
       }
     }).start()
@@ -47,7 +47,7 @@ class Server(port: Int) extends Actor {
       val players = playersToSockets.keys
       optionPair.get._2 ! Send(AllPlayersResponse(players.toSeq))
     } else {
-      println("Некому отправлять игроков, исключение..")
+      println("Некому отправлять игроков")
     }
   }
 }

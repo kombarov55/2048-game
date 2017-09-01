@@ -9,7 +9,7 @@ import game.net.Server.Start
 object LaunchServer extends App {
 
   val system = ActorSystem("my-system")
-  val server = system.actorOf(Props(new Server(6666)))
+  val server = system.actorOf(Props(new Server(6666)), "server")
   server ! Start
 
   val address = InetAddress.getLocalHost.getHostAddress
