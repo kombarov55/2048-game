@@ -2,10 +2,11 @@ package game.net
 
 import java.net.InetSocketAddress
 
-import akka.actor.{Actor, Props}
+import akka.actor.{Actor, ActorRef, Props}
 import akka.io.Tcp.{Bind, Bound, Command, CommandFailed, Connected, Register}
 import akka.io.{IO, Tcp}
 import game.StaticData
+import game.net.Server.lobbyHandlers
 
 /**
   * Хранит списки игроков и handler-ов
@@ -26,13 +27,15 @@ class Server extends Actor {
 
     case Connected(remote, local) =>
       println(s"someone connected. remote:local = $remote:$local")
-      val handler = context.actorOf(Props(new LobbyHandler()), "handler")
+      val handler = context.actorOf(Props(new LobbyHandler(remote)))
+      lobbyHandlers = handler :: lobbyHandlers
       sender() ! Register(handler)
   }
 }
 
 object Server {
 
+  var lobbyHandlers = List.empty[ActorRef]
   var players = List.empty[Player]
 
 }
