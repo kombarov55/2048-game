@@ -27,9 +27,10 @@ class Server extends Actor {
 
     case Connected(remote, local) =>
       println(s"someone connected. remote:local = $remote:$local")
-      val handler = context.actorOf(Props(new LobbyHandler(remote)))
+      val connection = sender()
+      val handler = context.actorOf(Props(new LobbyHandler(remote, connection)))
       lobbyHandlers = handler :: lobbyHandlers
-      sender() ! Register(handler)
+      connection ! Register(handler)
   }
 }
 
