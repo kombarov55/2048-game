@@ -10,10 +10,7 @@ import game.StaticData
 import game.net.LobbyClient.SendToTheOtherEnd
 import game.net.LobbyProtocol.{AddPlayer, AllPlayers}
 
-/**
-  * В конструктор должна передаться лямба, что сделать после настройки. Параметр в ней - self.
-  */
-class LobbyClient(serverAddress: InetSocketAddress) extends Actor {
+class LobbyClient(serverAddress: InetSocketAddress, onPlayersReceived: (Seq[Player]) => Unit) extends Actor {
 
   var connection: ActorRef = _
 
@@ -36,7 +33,7 @@ class LobbyClient(serverAddress: InetSocketAddress) extends Actor {
 
     case request @ AllPlayers => self forward SendToTheOtherEnd(request)
 
-    case AllPlayers(players) if players != null => onPlayerListReceived(players)
+    case AllPlayers(players) if players != null => onPlayersReceived(players)
 
     case SendToTheOtherEnd(data) =>
       val serializedData = Serializer.serialize(data)
@@ -47,15 +44,11 @@ class LobbyClient(serverAddress: InetSocketAddress) extends Actor {
     case other: Any => println("client: received unknown message: " + other)
   }
 
-  def onPlayerListReceived(players: Seq[Player]): Unit = {
-    for (player <- players) {
-      println(player)
-    }
-  }
 }
 
 object LobbyClient {
-  def props(ip: String, port: Int): Props = Props(new LobbyClient(new InetSocketAddress(ip, port)))
+
+  def props(inetSocketAddress: InetSocketAddress, onPlayersReceived: (Seq[Player]) => Unit): Props = Props(new LobbyClient(inetSocketAddress, onPlayersReceived))
 
   private case class SendToTheOtherEnd(data: Any)
 

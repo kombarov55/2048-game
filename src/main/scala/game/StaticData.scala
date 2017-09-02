@@ -15,6 +15,8 @@ object StaticData {
   var address: String = InetAddress.getLocalHost.getHostAddress
   var localAddress: InetAddress = _
 
+  var serverAddress = new InetSocketAddress("localhost", 6666)
+
   var localSocketAddress: InetSocketAddress = _
 
   var system = ActorSystem("my-system")
