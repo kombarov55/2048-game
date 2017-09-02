@@ -16,9 +16,9 @@ class MultiplayerController extends Controller {
   }
 
   def displayPlayersOnPanel(players: Seq[Player]): Unit = {
-    panel.participantList.clear()
+    panel.playerList.clear()
     for (player <- players) {
-      panel.participantList.addElement(player.name)
+      panel.playerList.addElement(player)
     }
   }
 

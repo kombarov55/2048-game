@@ -4,11 +4,13 @@ import java.awt.Font
 import javax.swing.border.TitledBorder
 import javax.swing.{BorderFactory, DefaultListModel, JButton, JList}
 
+import game.net.Player
+
 //  Это можно переписать по border-layout
 class MultiplayerPanel extends Panel {
 
-  val participantList = new DefaultListModel[String]
-  val jlist = new JList[String](participantList)
+  val playerList = new DefaultListModel[Player]
+  val jlist = new JList[Player](playerList)
   jlist.setBounds(125, 75, 250, 250)
   jlist.setFont(new Font("Arial", Font.PLAIN, 18))
 
