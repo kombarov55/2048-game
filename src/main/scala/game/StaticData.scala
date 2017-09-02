@@ -1,6 +1,6 @@
 package game
 
-import java.net.{InetAddress, InetSocketAddress}
+import java.net.InetSocketAddress
 
 import akka.actor.ActorSystem
 import akka.serialization.SerializationExtension
@@ -10,14 +10,8 @@ object StaticData {
 
   var field: Field = null
 
-  var userName: String = "Безымянный"
-
-  var address: String = InetAddress.getLocalHost.getHostAddress
-  var localAddress: InetAddress = _
-
+  var userName = "Безымянный"
   var serverAddress = new InetSocketAddress("localhost", 6666)
-
-  var localSocketAddress: InetSocketAddress = _
 
   var system = ActorSystem("my-system")
 

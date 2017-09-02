@@ -1,4 +1,4 @@
-name := "chat"
+name := "net-2048"
 
 version := "1.0"
 

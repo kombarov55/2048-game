@@ -20,7 +20,6 @@ class LobbyClient(serverAddress: InetSocketAddress, onPlayersReceived: (Seq[Play
 
   override def receive: Receive = {
     case Connected(_, localAddress) =>
-      StaticData.localSocketAddress = localAddress
       connection = sender()
       connection ! Register(self)
       self ! SendToTheOtherEnd(AddPlayer("Николай", localAddress))
