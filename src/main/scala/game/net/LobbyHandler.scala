@@ -3,7 +3,7 @@ package game.net
 import java.net.InetSocketAddress
 
 import akka.actor.{Actor, ActorRef}
-import akka.io.Tcp.{PeerClosed, Received, Write}
+import akka.io.Tcp.{ErrorClosed, PeerClosed, Received, Write}
 import akka.util.ByteString
 import game.net.LobbyHandler.SendToTheOtherEnd
 import game.net.LobbyProtocol.{AddPlayer, AllPlayers}
@@ -18,6 +18,11 @@ class LobbyHandler(remote: InetSocketAddress, connection: ActorRef) extends Acto
       self ! deserializedData
 
     case PeerClosed =>
+      players = players.filterNot { _.address == remote }
+      lobbyHandlers = lobbyHandlers.filterNot { actorRef => actorRef == connection }
+      broadcast(AllPlayers(players))
+
+    case ErrorClosed(_) =>
       players = players.filterNot { _.address == remote }
       lobbyHandlers = lobbyHandlers.filterNot { actorRef => actorRef == connection }
       broadcast(AllPlayers(players))

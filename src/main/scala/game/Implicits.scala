@@ -1,6 +1,7 @@
 package game
 
 import java.awt.event.{ActionEvent, ActionListener, KeyAdapter, KeyEvent}
+import javax.swing.event.{ListSelectionEvent, ListSelectionListener}
 
 object Implicits {
 
@@ -14,6 +15,10 @@ object Implicits {
 
   implicit def Function2Runnable(fun: () => Any): Runnable = new Runnable {
     override def run() = fun()
+  }
+
+  implicit def Function2ListSelectionListener(fun: (ListSelectionEvent) => Any): ListSelectionListener = new ListSelectionListener {
+    override def valueChanged(e: ListSelectionEvent) = fun(e)
   }
 
   implicit class RichOption[T](option: Option[T]) {
@@ -31,8 +36,6 @@ object Implicits {
     }
 
     def otherwise(fun: () => Unit): Unit = otherwise(fun())
-
-
   }
 
 }

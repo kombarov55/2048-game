@@ -13,6 +13,7 @@ class LobbyPanel extends Panel {
   val jlist = new JList[Player](playerList)
   jlist.setBounds(125, 75, 250, 250)
   jlist.setFont(new Font("Arial", Font.PLAIN, 18))
+  jlist.setCellRenderer(new PlayerRenderer)
 
   val border = BorderFactory.createTitledBorder("Выберите соперника")
   border.setTitleJustification(TitledBorder.CENTER)
