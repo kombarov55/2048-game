@@ -7,7 +7,7 @@ import game.net.Player
 
 class PlayerRenderer extends ListCellRenderer[Player] {
   override def getListCellRendererComponent(list: JList[_ <: Player], value: Player, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component = {
-    val label = new JLabel(value.name)
+    val label = new JLabel(s"${value.name} (${value.address})")
 
     label.setOpaque(true)
 

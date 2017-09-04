@@ -13,6 +13,8 @@ object StaticData {
   var userName = "Безымянный"
   var serverAddress = new InetSocketAddress("localhost", 6666)
 
+  var localAddress: InetSocketAddress = _
+
   var system = ActorSystem("my-system")
 
   val serialization = SerializationExtension(StaticData.system)

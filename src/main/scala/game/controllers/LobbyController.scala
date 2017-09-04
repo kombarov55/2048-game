@@ -38,7 +38,7 @@ class LobbyController extends Controller {
 
   def displayPlayersOnPanel(players: Seq[Player]): Unit = {
     panel.playerList.clear()
-    for (player <- players) {
+    for (player <- players if player.address != StaticData.localAddress) {
       panel.playerList.addElement(player)
     }
   }

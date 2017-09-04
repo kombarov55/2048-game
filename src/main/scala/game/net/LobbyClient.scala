@@ -22,6 +22,7 @@ class LobbyClient(serverAddress: InetSocketAddress, onPlayersReceived: (Seq[Play
     case Connected(_, localAddress) =>
       connection = sender()
       connection ! Register(self)
+      StaticData.localAddress = localAddress
       self ! SendToTheOtherEnd(AddPlayer(StaticData.userName, localAddress))
 
 
