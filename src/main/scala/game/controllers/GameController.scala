@@ -3,8 +3,8 @@ package game.controllers
 import java.awt.Color
 import javax.swing.JButton
 
+import game.Globals
 import game.Implicits.Function2ActionListener
-import game.StaticData
 import game.model.{Cell, Command, Field}
 import game.swing.{GamePanel, KeyboardListener}
 
@@ -18,25 +18,25 @@ class GameController extends Controller {
   }
 
   override def initializeModel(): Unit = {
-    if (StaticData.field == null) {
-      StaticData.field = new Field
-      StaticData.field.createCellsOnStart()
+    if (Globals.field == null) {
+      Globals.field = new Field
+      Globals.field.createCellsOnStart()
     }
     renderCells()
-    panel.scoreLabel.setText(StaticData.field.score.toString)
+    panel.scoreLabel.setText(Globals.field.score.toString)
   }
 
   def proceedCommand(command: Command): Unit = {
-    StaticData.field.makeTurn(command)
-    panel.scoreLabel.setText(StaticData.field.score.toString)
-    if (StaticData.field.anyMovementInLastTurn) StaticData.field.spawnNewCell()
+    Globals.field.makeTurn(command)
+    panel.scoreLabel.setText(Globals.field.score.toString)
+    if (Globals.field.anyMovementInLastTurn) Globals.field.spawnNewCell()
     renderCells()
-    if (StaticData.field.isGameOver) {
+    if (Globals.field.isGameOver) {
       (new GameoverController).becomeActive()
     }
   }
 
-  def renderCells(changes: Seq[Cell] = StaticData.field.rows.flatten.toSeq): Unit = {
+  def renderCells(changes: Seq[Cell] = Globals.field.rows.flatten.toSeq): Unit = {
     for (cell <- changes) {
       val button = getButton(cell.x, cell.y)
       button.setText(cell.score match {

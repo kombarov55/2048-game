@@ -6,7 +6,7 @@ import akka.actor.ActorSystem
 import akka.serialization.SerializationExtension
 import game.model.Field
 
-object StaticData {
+object Globals {
 
   var field: Field = null
 
@@ -17,5 +17,5 @@ object StaticData {
 
   var system = ActorSystem("my-system")
 
-  val serialization = SerializationExtension(StaticData.system)
+  val serialization = SerializationExtension(Globals.system)
 }

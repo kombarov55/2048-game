@@ -5,13 +5,13 @@ import java.net.InetSocketAddress
 import akka.actor.{Actor, ActorRef, Props}
 import akka.io.Tcp.{Bind, Bound, Command, CommandFailed, Connected, Register}
 import akka.io.{IO, Tcp}
-import game.StaticData
+import game.Globals
 import game.net.Server.lobbyHandlers
 
 class Server extends Actor {
 
   override def preStart(): Unit = {
-    IO(Tcp)(StaticData.system) ! Bind(self, new InetSocketAddress("localhost", 6666))
+    IO(Tcp)(Globals.system) ! Bind(self, new InetSocketAddress("localhost", 6666))
   }
 
   override def receive: Receive = {

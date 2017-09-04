@@ -5,6 +5,6 @@ import game.net.Server
 
 object ServerLauncher extends App {
 
-  val server = StaticData.system.actorOf(Props[Server], "server")
+  val server = Globals.system.actorOf(Props[Server], "server")
 
 }

@@ -6,7 +6,7 @@ import akka.actor.{Actor, ActorRef, Props}
 import akka.io.Tcp.{Connect, Connected, Received, Register, Write}
 import akka.io.{IO, Tcp}
 import akka.util.ByteString
-import game.StaticData
+import game.Globals
 import game.net.LobbyClient.Stop
 import game.net.LobbyProtocol.{AddPlayer, AllPlayers}
 import game.net.ServerConnectionHandler.{Lobby, SetConnectionType}
@@ -16,18 +16,18 @@ class LobbyClient(serverAddress: InetSocketAddress, onPlayersReceived: (Seq[Play
   var connection: ActorRef = _
 
   override def preStart(): Unit = {
-    IO(Tcp)(StaticData.system) ! Connect(serverAddress)
+    IO(Tcp)(Globals.system) ! Connect(serverAddress)
   }
 
   override def receive: Receive = {
     case Connected(_, localAddress) =>
       connection = sender()
       connection ! Register(self)
-      StaticData.localAddress = localAddress
+      Globals.localAddress = localAddress
       sendToTheOtherEnd(SetConnectionType(Lobby))
       //TODO: Сообщение пропадает, если посылать их подряд. Нужно разобраться как получить то сообщение
       Thread.sleep(100)
-      sendToTheOtherEnd(AddPlayer(StaticData.userName, localAddress))
+      sendToTheOtherEnd(AddPlayer(Globals.userName, localAddress))
 
 
     case Received(data) =>
