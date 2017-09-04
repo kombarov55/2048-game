@@ -7,8 +7,9 @@ import akka.io.Tcp.{Connect, Connected, Received, Register, Write}
 import akka.io.{IO, Tcp}
 import akka.util.ByteString
 import game.StaticData
-import game.net.LobbyClient.{SendToTheOtherEnd, Stop}
+import game.net.LobbyClient.Stop
 import game.net.LobbyProtocol.{AddPlayer, AllPlayers}
+import game.net.ServerConnectionHandler.{Lobby, SetConnectionType}
 
 class LobbyClient(serverAddress: InetSocketAddress, onPlayersReceived: (Seq[Player]) => Unit) extends Actor {
 
@@ -23,18 +24,17 @@ class LobbyClient(serverAddress: InetSocketAddress, onPlayersReceived: (Seq[Play
       connection = sender()
       connection ! Register(self)
       StaticData.localAddress = localAddress
-      self ! SendToTheOtherEnd(AddPlayer(StaticData.userName, localAddress))
+      sendToTheOtherEnd(SetConnectionType(Lobby))
+      //TODO: Сообщение пропадает, если посылать их подряд. Нужно разобраться как получить то сообщение
+      Thread.sleep(100)
+      sendToTheOtherEnd(AddPlayer(StaticData.userName, localAddress))
 
 
     case Received(data) =>
       val deserializedMessage = Serializer.deserialize(data.toArray)
       self ! deserializedMessage
 
-    case SendToTheOtherEnd(data) =>
-      val serializedData = Serializer.serialize(data)
-      connection ! Write(ByteString(serializedData))
-
-    case ap @ AllPlayers => self ! SendToTheOtherEnd(ap)
+    case ap @ AllPlayers => sendToTheOtherEnd(ap)
 
     case AllPlayers(players) => onPlayersReceived(players)
 
@@ -43,13 +43,16 @@ class LobbyClient(serverAddress: InetSocketAddress, onPlayersReceived: (Seq[Play
     case other: Any => println("client: received unknown message: " + other)
   }
 
+  def sendToTheOtherEnd(message: Any): Unit = {
+    val serializedData = Serializer.serialize(message)
+    connection ! Write(ByteString(serializedData))
+  }
+
 }
 
 object LobbyClient {
 
   def props(inetSocketAddress: InetSocketAddress, onPlayersReceived: (Seq[Player]) => Unit): Props = Props(new LobbyClient(inetSocketAddress, onPlayersReceived))
-
-  private case class SendToTheOtherEnd(data: Any)
 
   object Stop
 

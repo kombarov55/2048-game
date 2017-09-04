@@ -8,13 +8,6 @@ import akka.io.{IO, Tcp}
 import game.StaticData
 import game.net.Server.lobbyHandlers
 
-/**
-  * Хранит списки игроков и handler-ов
-  * Операции:
-  * 1) Записать игрока
-  * 2) Убрать игрока
-  * 3) Получить список всех игроков
-  */
 class Server extends Actor {
 
   override def preStart(): Unit = {
@@ -22,13 +15,12 @@ class Server extends Actor {
   }
 
   override def receive: Receive = {
-    case Bound(localAddress) => println("I was bound at " + localAddress)
+    case Bound(localAddress) => println("Server bound at " + localAddress)
     case CommandFailed(cmd: Command) => println("bounding failed..")
 
-    case Connected(remote, local) =>
-      println(s"someone connected. remote:local = $remote:$local")
+    case Connected(remote, _) =>
       val connection = sender()
-      val handler = context.actorOf(Props(new LobbyHandler(remote, connection)))
+      val handler = context.actorOf(Props(new ServerConnectionHandler(remote, connection)))
       lobbyHandlers = handler :: lobbyHandlers
       connection ! Register(handler)
   }
