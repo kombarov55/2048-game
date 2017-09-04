@@ -19,24 +19,20 @@ class LobbyHandler(remote: InetSocketAddress, connection: ActorRef) extends Acto
 
     case PeerClosed =>
       players = players.filterNot { _.address == remote }
+      lobbyHandlers = lobbyHandlers.filterNot { actorRef => actorRef == connection }
       broadcast(AllPlayers(players))
 
     case AddPlayer(name, address) =>
       val newPlayer = Player(name, address)
       players = newPlayer :: players
-      println(s"handler: $newPlayer added. players now: $players")
       broadcast(AllPlayers(players))
-      println("handler: all players broadcasted")
 
     case AllPlayers =>
-      println("handler: received message about players. now sending")
       self ! SendToTheOtherEnd(players)
 
     case SendToTheOtherEnd(anything) =>
-      println("handler: Sending to the other end: " + anything)
       val bytes = Serializer.serialize(anything)
       connection ! Write(ByteString(bytes))
-      println("handler: message broadcasted")
 
     case unknown: Any => println("handler received unknown message: " + unknown)
 

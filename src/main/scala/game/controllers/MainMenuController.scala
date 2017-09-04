@@ -1,7 +1,7 @@
 package game.controllers
 
 import game.Implicits.Function2ActionListener
-import game.swing.{MainMenuPanel, Window}
+import game.swing.MainMenuPanel
 
 class MainMenuController extends Controller {
 
@@ -12,7 +12,6 @@ class MainMenuController extends Controller {
     panel.multiplayerButton.addActionListener((new MultiplayerController).becomeActive _)
     panel.settingsButton.addActionListener((new SettingsController).becomeActive _)
     panel.exitButton.addActionListener { () =>
-      Window.dispose()
       System.exit(0)
     }
   }

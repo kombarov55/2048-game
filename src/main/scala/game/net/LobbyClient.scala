@@ -26,7 +26,6 @@ class LobbyClient(serverAddress: InetSocketAddress, onPlayersReceived: (Seq[Play
 
 
     case Received(data) =>
-      println("client received message, now deserializing..")
       val deserializedMessage = Serializer.deserialize(data.toArray)
       self ! deserializedMessage
 
@@ -36,9 +35,7 @@ class LobbyClient(serverAddress: InetSocketAddress, onPlayersReceived: (Seq[Play
 
     case SendToTheOtherEnd(data) =>
       val serializedData = Serializer.serialize(data)
-      println("client: serialized " + data)
       connection ! Write(ByteString(serializedData))
-      println(s"client: sent $data to the other end.")
 
     case other: Any => println("client: received unknown message: " + other)
   }
