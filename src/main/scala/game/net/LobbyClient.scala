@@ -7,7 +7,7 @@ import akka.io.Tcp.{Connect, Connected, Received, Register, Write}
 import akka.io.{IO, Tcp}
 import akka.util.ByteString
 import game.StaticData
-import game.net.LobbyClient.SendToTheOtherEnd
+import game.net.LobbyClient.{SendToTheOtherEnd, Stop}
 import game.net.LobbyProtocol.{AddPlayer, AllPlayers}
 
 class LobbyClient(serverAddress: InetSocketAddress, onPlayersReceived: (Seq[Player]) => Unit) extends Actor {
@@ -22,20 +22,22 @@ class LobbyClient(serverAddress: InetSocketAddress, onPlayersReceived: (Seq[Play
     case Connected(_, localAddress) =>
       connection = sender()
       connection ! Register(self)
-      self ! SendToTheOtherEnd(AddPlayer("Николай", localAddress))
+      self ! SendToTheOtherEnd(AddPlayer(StaticData.userName, localAddress))
 
 
     case Received(data) =>
       val deserializedMessage = Serializer.deserialize(data.toArray)
       self ! deserializedMessage
 
-    case request @ AllPlayers => self forward SendToTheOtherEnd(request)
-
-    case AllPlayers(players) if players != null => onPlayersReceived(players)
-
     case SendToTheOtherEnd(data) =>
       val serializedData = Serializer.serialize(data)
       connection ! Write(ByteString(serializedData))
+
+    case ap @ AllPlayers => self ! SendToTheOtherEnd(ap)
+
+    case AllPlayers(players) => onPlayersReceived(players)
+
+    case Stop => context stop self
 
     case other: Any => println("client: received unknown message: " + other)
   }
@@ -47,5 +49,7 @@ object LobbyClient {
   def props(inetSocketAddress: InetSocketAddress, onPlayersReceived: (Seq[Player]) => Unit): Props = Props(new LobbyClient(inetSocketAddress, onPlayersReceived))
 
   private case class SendToTheOtherEnd(data: Any)
+
+  object Stop
 
 }

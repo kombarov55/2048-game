@@ -9,7 +9,7 @@ class MainMenuController extends Controller {
 
   override def bindPanelWithSelf(): Unit = {
     panel.playButton.addActionListener((new GameController).becomeActive _)
-    panel.multiplayerButton.addActionListener((new MultiplayerController).becomeActive _)
+    panel.multiplayerButton.addActionListener((new LobbyController).becomeActive _)
     panel.settingsButton.addActionListener((new SettingsController).becomeActive _)
     panel.exitButton.addActionListener { () =>
       System.exit(0)

@@ -1,16 +1,25 @@
 package game.controllers
 import akka.actor.ActorRef
+import game.Implicits.Function2ActionListener
 import game.StaticData
+import game.net.LobbyClient.Stop
 import game.net.{LobbyClient, Player}
-import game.swing.MultiplayerPanel
+import game.swing.LobbyPanel
 
-class MultiplayerController extends Controller {
+class LobbyController extends Controller {
 
-  override val panel = new MultiplayerPanel
+  override val panel = new LobbyPanel
 
   var lobbyClient: ActorRef = _
 
   override def bindPanelWithSelf(): Unit = {
+    panel.backButton.addActionListener { () =>
+      lobbyClient ! Stop
+      MainMenuController.becomeActive()
+    }
+  }
+
+  override def initializeModel(): Unit = {
     val lobbyClientProps = LobbyClient.props(StaticData.serverAddress, displayPlayersOnPanel)
     lobbyClient = StaticData.system.actorOf(lobbyClientProps)
   }
@@ -21,5 +30,4 @@ class MultiplayerController extends Controller {
       panel.playerList.addElement(player)
     }
   }
-
 }
