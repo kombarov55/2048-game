@@ -22,21 +22,22 @@ class GameController extends Controller {
       Globals.field = new Field
       Globals.field.createCellsOnStart()
     }
-    renderCells()
+    renderCells(Globals.field.rows.flatten.toSeq)
     panel.scoreLabel.setText(Globals.field.score.toString)
   }
 
   def proceedCommand(command: Command): Unit = {
     Globals.field.makeTurn(command)
+
     panel.scoreLabel.setText(Globals.field.score.toString)
-    if (Globals.field.anyMovementInLastTurn) Globals.field.spawnNewCell()
-    renderCells()
+    renderCells(Globals.field.rows.flatten.toSeq)
+
     if (Globals.field.isGameOver) {
       (new GameoverController).becomeActive()
     }
   }
 
-  def renderCells(changes: Seq[Cell] = Globals.field.rows.flatten.toSeq): Unit = {
+  def renderCells(changes: Seq[Cell]): Unit = {
     for (cell <- changes) {
       val button = getButton(cell.x, cell.y)
       button.setText(cell.score match {

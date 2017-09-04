@@ -17,6 +17,7 @@ class Field(val rows: Array[Array[Cell]] =
     foldAndUpdateDelta(command.getLeftOrientatedRows(this))
     setAlreadySummedToFalse()
     recalculateScore()
+    if (anyMovementInLastTurn) spawnNewCell()
   }
 
   def createCellsOnStart(): Unit = {
