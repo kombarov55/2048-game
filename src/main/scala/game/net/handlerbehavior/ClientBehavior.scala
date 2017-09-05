@@ -6,7 +6,7 @@ import akka.actor.{Actor, ActorRef}
 import akka.io.Tcp.{Connect, Connected, Register}
 import akka.io.{IO, Tcp}
 import game.Globals
-import game.net.LobbyProtocol.AddPlayer
+import game.net.LobbyMessages.AddPlayer
 import game.net.ServerConnectionHandler.{ConnectionType, SetConnectionType}
 
 //TODO: сделать получение Connect, при котором будет делать то что происходит в клиенте в preStart и в case Connected.

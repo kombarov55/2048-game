@@ -4,7 +4,7 @@ import java.net.InetSocketAddress
 
 import akka.actor.{Actor, ActorRef, Props}
 import game.net.LobbyClient.Stop
-import game.net.LobbyProtocol.AllPlayers
+import game.net.LobbyMessages.AllPlayers
 import game.net.ServerConnectionHandler.ConnectionType
 import game.net.ServerConnectionHandler.ConnectionType.Lobby
 import game.net.handlerbehavior.{ClientBehavior, IOBehavior}

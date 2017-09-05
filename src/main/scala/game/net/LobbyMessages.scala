@@ -2,7 +2,7 @@ package game.net
 
 import java.net.InetSocketAddress
 
-object LobbyProtocol {
+object LobbyMessages {
 
   case class AddPlayer(name: String, address: InetSocketAddress)
 

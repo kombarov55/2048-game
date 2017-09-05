@@ -4,7 +4,7 @@ import java.net.InetSocketAddress
 
 import akka.actor.{Actor, ActorRef}
 import akka.io.Tcp.{ErrorClosed, PeerClosed}
-import game.net.LobbyProtocol.{AddPlayer, AllPlayers}
+import game.net.LobbyMessages.{AddPlayer, AllPlayers}
 import game.net.Player
 import game.net.Server.{lobbyHandlers, players}
 import game.net.ServerConnectionHandler.SendToTheOtherEnd
