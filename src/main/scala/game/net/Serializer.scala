@@ -2,6 +2,8 @@ package game.net
 
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream}
 
+//TODO: Это медленно. Нужно подумать над другим вариантом сериализации
+
 object Serializer {
 
   def serialize(data: Any): Array[Byte] = {
