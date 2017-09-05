@@ -3,7 +3,8 @@ package game.net
 import java.net.InetSocketAddress
 
 import akka.actor.{Actor, ActorRef}
-import game.net.ServerConnectionHandler.{Lobby, SetConnectionType}
+import game.net.ServerConnectionHandler.ConnectionType.Lobby
+import game.net.ServerConnectionHandler.SetConnectionType
 import game.net.handlerbehavior.{IOBehavior, LobbyBehavior}
 
 class ServerConnectionHandler(val remoteAddress: InetSocketAddress, var connection: ActorRef)
@@ -25,10 +26,16 @@ object ServerConnectionHandler {
 
   case class SendToTheOtherEnd(anything: Any) extends Serializable
 
-  case class SetConnectionType(handlerType: HandlerType)
+  case class SetConnectionType(handlerType: ConnectionType)
 
-  trait HandlerType extends Serializable
+  trait ConnectionType extends Serializable
 
-  object Lobby extends HandlerType with Serializable
-  object GameMonitoring extends HandlerType with Serializable
+  object ConnectionType {
+
+    object Lobby extends ConnectionType with Serializable
+
+    object GameMonitoring extends ConnectionType with Serializable
+
+  }
+
 }
