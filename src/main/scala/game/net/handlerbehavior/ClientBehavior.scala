@@ -9,7 +9,6 @@ import game.Globals
 import game.net.LobbyMessages.AddPlayer
 import game.net.ServerConnectionHandler.{ConnectionType, SetConnectionType}
 
-//TODO: сделать получение Connect, при котором будет делать то что происходит в клиенте в preStart и в case Connected.
 trait ClientBehavior extends Actor with IOBehavior {
 
   var connection: ActorRef

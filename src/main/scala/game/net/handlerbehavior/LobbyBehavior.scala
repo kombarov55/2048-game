@@ -6,8 +6,8 @@ import akka.actor.{Actor, ActorRef}
 import akka.io.Tcp.{ErrorClosed, PeerClosed}
 import game.net.LobbyMessages.{AddPlayer, AllPlayers}
 import game.net.Player
-import game.net.Server.{lobbyHandlers, players}
 import game.net.ServerConnectionHandler.SendToTheOtherEnd
+import game.net.ServerGlobals.{lobbyHandlers, players}
 
 trait LobbyBehavior extends Actor with IOBehavior {
 

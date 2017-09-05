@@ -4,7 +4,7 @@ import java.net.InetSocketAddress
 
 import akka.actor.{Actor, ActorRef}
 import game.net.RoomHostClient.Connect
-import game.net.RoomHostMessages.{CreateRoom, RoomCreated}
+import game.net.RoomHostMessages.{CreateRoom, RoomCreated, TurnMade}
 import game.net.ServerConnectionHandler.ConnectionType
 import game.net.handlerbehavior.{ClientBehavior, IOBehavior}
 
@@ -24,6 +24,8 @@ class RoomHostClient(val serverAddress: InetSocketAddress) extends Actor with IO
     case Connect =>
       println("connecting")
       sendToTheOtherEnd(CreateRoom)
+
+    case msg @ TurnMade(_, _) => sendToTheOtherEnd(msg)
 //      implicit val timeout = Timeout(5000)
 //      ask(connection, CreateRoom).onSuccess {
 //        case RoomCreated => println("room created. ")

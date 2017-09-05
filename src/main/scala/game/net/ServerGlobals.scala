@@ -6,9 +6,9 @@ import akka.actor.{Actor, ActorRef, Props}
 import akka.io.Tcp.{Bind, Bound, CommandFailed, Connected, Register}
 import akka.io.{IO, Tcp}
 import game.Globals
-import game.net.Server.lobbyHandlers
+import game.net.ServerGlobals.lobbyHandlers
 
-class Server extends Actor {
+class ServerGlobals extends Actor {
 
   override def preStart(): Unit = {
     IO(Tcp)(Globals.system) ! Bind(self, new InetSocketAddress("localhost", 6666))
@@ -26,9 +26,11 @@ class Server extends Actor {
   }
 }
 
-object Server {
+object ServerGlobals {
 
   var lobbyHandlers = List.empty[ActorRef]
   var players = List.empty[Player]
+
+  var rooms = List.empty[Room]
 
 }
