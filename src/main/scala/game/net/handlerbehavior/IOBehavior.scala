@@ -8,14 +8,18 @@ import game.net.ServerConnectionHandler.SendToTheOtherEnd
 
 trait IOBehavior extends Actor {
 
-  val connection: ActorRef
+  // var потому что connection у клиента получаем после первого запроса, и инициализировать его не получается
+  var connection: ActorRef
 
   def ioBehavior: Receive = {
-    case Received(byteString) =>
-      val deserializedData = Serializer.deserialize(byteString.toArray)
-      self ! deserializedData
+    case Received(byteString) => deserializeAndReceiveAgain(byteString)
 
     case SendToTheOtherEnd(message) => sendToTheOtherEnd(message)
+  }
+
+  def deserializeAndReceiveAgain(byteString: ByteString): Unit = {
+    val deserializedData = Serializer.deserialize(byteString.toArray)
+    self ! deserializedData
   }
 
   def sendToTheOtherEnd(message: Any): Unit = {

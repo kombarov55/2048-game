@@ -6,7 +6,7 @@ import akka.actor.{Actor, ActorRef}
 import game.net.ServerConnectionHandler.{Lobby, SetConnectionType}
 import game.net.handlerbehavior.{IOBehavior, LobbyBehavior}
 
-class ServerConnectionHandler(val remoteAddress: InetSocketAddress, val connection: ActorRef)
+class ServerConnectionHandler(val remoteAddress: InetSocketAddress, var connection: ActorRef)
   extends Actor with IOBehavior with LobbyBehavior {
 
   override def receive: Receive = ioBehavior orElse {

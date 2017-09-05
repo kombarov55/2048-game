@@ -3,37 +3,16 @@ package game.net
 import java.net.InetSocketAddress
 
 import akka.actor.{Actor, ActorRef, Props}
-import akka.io.Tcp.{Connect, Connected, Received, Register, Write}
-import akka.io.{IO, Tcp}
-import akka.util.ByteString
-import game.Globals
 import game.net.LobbyClient.Stop
-import game.net.LobbyProtocol.{AddPlayer, AllPlayers}
-import game.net.ServerConnectionHandler.{Lobby, SetConnectionType}
+import game.net.LobbyProtocol.AllPlayers
+import game.net.handlerbehavior.{ClientBehavior, IOBehavior}
 
-class LobbyClient(serverAddress: InetSocketAddress, onPlayersReceived: (Seq[Player]) => Unit) extends Actor {
+class LobbyClient(val serverAddress: InetSocketAddress, onPlayersReceived: (Seq[Player]) => Unit)
+  extends Actor with IOBehavior with ClientBehavior {
 
   var connection: ActorRef = _
 
-  override def preStart(): Unit = {
-    IO(Tcp)(Globals.system) ! Connect(serverAddress)
-  }
-
-  override def receive: Receive = {
-    case Connected(_, localAddress) =>
-      connection = sender()
-      connection ! Register(self)
-      Globals.localAddress = localAddress
-      sendToTheOtherEnd(SetConnectionType(Lobby))
-      //TODO: Сообщение пропадает, если посылать их подряд. Нужно разобраться как получить то сообщение
-      Thread.sleep(100)
-      sendToTheOtherEnd(AddPlayer(Globals.userName, localAddress))
-
-
-    case Received(data) =>
-      val deserializedMessage = Serializer.deserialize(data.toArray)
-      self ! deserializedMessage
-
+  override def receive: Receive = ioBehavior orElse clientBehavior orElse {
     case ap @ AllPlayers => sendToTheOtherEnd(ap)
 
     case AllPlayers(players) => onPlayersReceived(players)
@@ -42,12 +21,6 @@ class LobbyClient(serverAddress: InetSocketAddress, onPlayersReceived: (Seq[Play
 
     case other: Any => println("client: received unknown message: " + other)
   }
-
-  def sendToTheOtherEnd(message: Any): Unit = {
-    val serializedData = Serializer.serialize(message)
-    connection ! Write(ByteString(serializedData))
-  }
-
 }
 
 object LobbyClient {

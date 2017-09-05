@@ -11,7 +11,7 @@ import game.net.ServerConnectionHandler.SendToTheOtherEnd
 
 trait LobbyBehavior extends Actor with IOBehavior {
 
-  val connection: ActorRef
+  var connection: ActorRef
   val remoteAddress: InetSocketAddress
 
   def lobbyBehavior: Receive = {
@@ -37,7 +37,7 @@ trait LobbyBehavior extends Actor with IOBehavior {
   }
 
   def broadcast(message: AnyRef): Unit = {
-    println(s"lobbybehavior: broadcasting $message")
+    println(s"lobby behavior: broadcasting $message")
     for (handler <- lobbyHandlers) {
       handler ! SendToTheOtherEnd(message)
     }
