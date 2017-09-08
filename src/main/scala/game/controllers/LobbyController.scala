@@ -4,8 +4,7 @@ import javax.swing.event.ListSelectionEvent
 import akka.actor.ActorRef
 import game.Globals
 import game.Implicits.{Function2ActionListener, Function2ListSelectionListener}
-import game.net.LobbyClient.Stop
-import game.net.{LobbyClient, Player}
+import game.net.Player
 import game.swing.LobbyPanel
 
 class LobbyController extends Controller {
@@ -19,7 +18,7 @@ class LobbyController extends Controller {
     panel.versusButton.setEnabled(false)
 
     panel.backButton.addActionListener { () =>
-      lobbyClient ! Stop
+//      lobbyClient ! Stop
       MainMenuController.becomeActive()
     }
     panel.jlist.addListSelectionListener { e: ListSelectionEvent =>
@@ -32,8 +31,8 @@ class LobbyController extends Controller {
   }
 
   override def initializeModel(): Unit = {
-    val lobbyClientProps = LobbyClient.props(Globals.serverAddress, displayPlayersOnPanel)
-    lobbyClient = Globals.system.actorOf(lobbyClientProps)
+//    val lobbyClientProps = LobbyClient.props(Globals.serverAddress, displayPlayersOnPanel)
+//    lobbyClient = Globals.system.actorOf(lobbyClientProps)
   }
 
   def displayPlayersOnPanel(players: Seq[Player]): Unit = {

@@ -1,8 +1,6 @@
 package game.net.handlerbehavior
 
-import java.net.InetSocketAddress
-
-import akka.actor.{Actor, ActorRef}
+import akka.actor.Actor
 import akka.io.Tcp.{ErrorClosed, PeerClosed}
 import game.net.LobbyMessages.{AddPlayer, AllPlayers}
 import game.net.Player
@@ -11,10 +9,7 @@ import game.net.ServerGlobals.{lobbyHandlers, players}
 
 trait LobbyBehavior extends Actor with IOBehavior {
 
-  var connection: ActorRef
-  val remoteAddress: InetSocketAddress
-
-  def lobbyBehavior: Receive = {
+  def lobbyBehavior: Receive = ioBehavior orElse {
     case PeerClosed => stop()
 
     case ErrorClosed(_) => stop()

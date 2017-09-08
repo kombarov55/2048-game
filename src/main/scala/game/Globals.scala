@@ -2,9 +2,9 @@ package game
 
 import java.net.InetSocketAddress
 
-import akka.actor.ActorSystem
-import akka.serialization.SerializationExtension
+import akka.actor.{ActorSystem, Props}
 import game.model.Field
+import game.net.Client
 
 object Globals {
 
@@ -17,5 +17,5 @@ object Globals {
 
   var system = ActorSystem("my-system")
 
-  val serialization = SerializationExtension(Globals.system)
+  val client = system.actorOf(Props[Client], "client")
 }

@@ -18,9 +18,9 @@ class ServerGlobals extends Actor {
     case Bound(localAddress) => println("Server bound at " + localAddress)
     case CommandFailed(_) => println("bounding failed..")
 
-    case Connected(remote, _) =>
+    case Connected(remote, local) =>
       val connection = sender()
-      val handler = context.actorOf(Props(new ServerConnectionHandler(remote, connection)))
+      val handler = context.actorOf(Props(new ServerConnectionHandler(remote, local, connection)), name = "serverHandler")
       lobbyHandlers = handler :: lobbyHandlers
       connection ! Register(handler)
   }

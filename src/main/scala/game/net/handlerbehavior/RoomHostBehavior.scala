@@ -8,7 +8,7 @@ trait RoomHostBehavior extends Actor with IOBehavior {
 
   var myRoom: Room = _
 
-  def roomHostBehavior: Receive = {
+  def roomHostBehavior: Receive = ioBehavior orElse {
     case CreateRoom =>
       myRoom = Room(connection)
       ServerGlobals.rooms = myRoom :: ServerGlobals.rooms

@@ -1,15 +1,12 @@
 package game.net.handlerbehavior
 
-import akka.actor.{Actor, ActorRef}
+import akka.actor.Actor
 import akka.io.Tcp.{Received, Write}
 import akka.util.ByteString
 import game.net.Serializer
 import game.net.ServerConnectionHandler.SendToTheOtherEnd
 
-trait IOBehavior extends Actor {
-
-  // var потому что connection у клиента получаем после первого запроса, и инициализировать его не получается
-  var connection: ActorRef
+trait IOBehavior extends Actor with SocketHandler {
 
   def ioBehavior: Receive = {
     case Received(byteString) => deserializeAndReceiveAgain(byteString)
