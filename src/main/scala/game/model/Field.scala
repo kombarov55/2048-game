@@ -111,4 +111,6 @@ class Field(val rows: Array[Array[Cell]] =
       ret += row.map(_.score).mkString(", ") + "\n"
     ret
   }
+
+  def cells: Seq[Cell] = rows.flatten.toSeq
 }

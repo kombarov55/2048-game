@@ -3,7 +3,7 @@ package game.net
 import java.net.InetSocketAddress
 
 import akka.actor.{Actor, ActorRef}
-import game.net.ConnectionType.{Lobby, RoomHost}
+import game.net.ConnectionType.{RoomHost, ServerLobby}
 import game.net.ServerConnectionHandler.SetConnectionType
 import game.net.handlerbehavior.{IOBehavior, LobbyServerBehavior, RoomHostServerBehavior, SocketHandler}
 
@@ -12,7 +12,7 @@ class ServerConnectionHandler(val remoteAddress: InetSocketAddress, val localAdd
 
   override def receive: Receive = ioBehavior orElse {
     case SetConnectionType(handlerType) => handlerType match {
-      case Lobby =>
+      case ServerLobby =>
         println("becoming lobby handler")
         context.become(lobbyBehavior)
       case RoomHost =>

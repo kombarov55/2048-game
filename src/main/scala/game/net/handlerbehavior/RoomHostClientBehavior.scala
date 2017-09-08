@@ -1,7 +1,7 @@
 package game.net.handlerbehavior
 
 import akka.actor.SupervisorStrategy.Stop
-import game.net.RoomHostMessages.{CreateRoom, RoomCreated}
+import game.net.RoomHostMessages.{CreateRoom, RoomCreated, TurnMade}
 
 trait RoomHostClientBehavior extends SocketHandler with IOBehavior {
 
@@ -11,6 +11,9 @@ trait RoomHostClientBehavior extends SocketHandler with IOBehavior {
 
     case RoomCreated =>
       println("Room created")
+
+    case msg @ TurnMade(cells, score) =>
+      sendToTheOtherEnd(msg)
 
     case Stop => context stop self
   }
