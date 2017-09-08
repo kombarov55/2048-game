@@ -4,7 +4,7 @@ import akka.actor.Actor
 import game.net.RoomHostMessages.{CreateRoom, RoomCreated, TurnMade}
 import game.net.{Room, ServerGlobals}
 
-trait RoomHostBehavior extends Actor with IOBehavior {
+trait RoomHostServerBehavior extends Actor with IOBehavior {
 
   var myRoom: Room = _
 

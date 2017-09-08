@@ -3,16 +3,14 @@ package game.net
 import java.net.InetSocketAddress
 
 import akka.actor.{Actor, ActorRef}
-import game.Globals
-import game.net.ConnectionType.Lobby
-import game.net.LobbyMessages.AddPlayer
+import game.net.ConnectionType.{Lobby, RoomHost}
 import game.net.ServerConnectionHandler.SetConnectionType
-import game.net.handlerbehavior.{IOBehavior, LobbyClientBehavior, SocketHandler}
+import game.net.handlerbehavior.{IOBehavior, LobbyClientBehavior, RoomHostClientBehavior, SocketHandler}
 
 class ClientConnectionHandler(val connection: ActorRef,
                               val remoteAddress: InetSocketAddress,
                               val localAddress: InetSocketAddress)
-  extends Actor with SocketHandler with IOBehavior with LobbyClientBehavior {
+  extends Actor with SocketHandler with IOBehavior with LobbyClientBehavior with RoomHostClientBehavior {
 
 
   override def receive: Receive = ioBehavior orElse {
@@ -21,9 +19,14 @@ class ClientConnectionHandler(val connection: ActorRef,
         println("client becoming lobby")
         sendToTheOtherEnd(SetConnectionType(Lobby))
         Thread.sleep(100)
-        sendToTheOtherEnd(AddPlayer(Globals.userName, localAddress))
         context.become(handleLobbyClient)
+      case RoomHost =>
+        println("client becoming room host")
+        sendToTheOtherEnd(SetConnectionType(RoomHost))
+        Thread.sleep(100)
+        context.become(roomHostClientBehavior)
     }
+
   }
 
 }

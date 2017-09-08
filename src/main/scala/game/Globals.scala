@@ -4,7 +4,7 @@ import java.net.InetSocketAddress
 
 import akka.actor.{ActorSystem, Props}
 import game.model.Field
-import game.net.Client
+import game.net.ClientIO
 
 object Globals {
 
@@ -17,5 +17,5 @@ object Globals {
 
   var system = ActorSystem("my-system")
 
-  val client = system.actorOf(Props[Client], "client")
+  val clientIO = system.actorOf(Props[ClientIO], "client")
 }

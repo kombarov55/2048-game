@@ -7,7 +7,7 @@ import game.net.Player
 import game.net.ServerConnectionHandler.SendToTheOtherEnd
 import game.net.ServerGlobals.{lobbyHandlers, players}
 
-trait LobbyBehavior extends Actor with IOBehavior {
+trait LobbyServerBehavior extends Actor with IOBehavior {
 
   def lobbyBehavior: Receive = ioBehavior orElse {
     case PeerClosed => stop()
