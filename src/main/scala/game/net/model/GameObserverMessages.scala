@@ -1,10 +1,11 @@
 package game.net.model
 
+import java.io.Serializable
 import java.net.InetSocketAddress
 
 object GameObserverMessages {
 
-  object ListAllRoomsRequest extends Serializable
+  case class ListAllRoomsRequest(callback: (Seq[InetSocketAddress]) => Unit) extends Serializable
 
   case class ListAllRoomsResponse(hostAddresses: Seq[InetSocketAddress]) extends Serializable
 

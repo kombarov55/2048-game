@@ -1,5 +1,7 @@
 package game.net.handlers.handlerbehavior.client
 
+import java.net.InetSocketAddress
+
 import akka.actor.Actor
 import game.model.Cell
 import game.net.handlers.handlerbehavior.{IOBehavior, SocketHandler}
@@ -11,14 +13,18 @@ trait ObserverClientBehavior extends Actor with SocketHandler with IOBehavior {
 //  var onSubscribed: () => Unit
   var onTurnMade: (Seq[Cell], Int) => Unit
 
+  var allRoomsResponseCallback: (Seq[InetSocketAddress]) => Unit = _
+
   def observerClientBehavior: Receive = ioBehavior orElse {
 
-    case ListAllRoomsRequest =>
+    case ListAllRoomsRequest(callback) =>
+      allRoomsResponseCallback = callback
       println("list all rooms request")
       sendToTheOtherEnd(ListAllRoomsRequest)
 
     case ListAllRoomsResponse(rooms) =>
-      println(rooms)
+      allRoomsResponseCallback(rooms)
+      allRoomsResponseCallback = null
 
     case msg @ Subscribe(_) =>
       println("sending " + msg)

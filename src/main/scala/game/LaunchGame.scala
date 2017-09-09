@@ -3,38 +3,25 @@ package game
 import java.net.InetSocketAddress
 
 import game.Globals.clientIO
-import game.model.Field
+import game.controllers.MainMenuController
 import game.net.ClientIO.ConnectAs
-import game.net.model.ConnectionType.{ObserverClient, RoomHostClient}
+import game.net.model.ConnectionType.ObserverClient
 import game.net.model.GameObserverMessages.{ListAllRoomsRequest, Subscribe}
-import game.net.model.RoomHostMessages.{CreateRoom, TurnMade}
 
 import scala.io.StdIn
 
 object LaunchGame extends App {
 
-  //    MainMenuController.becomeActive()
+  MainMenuController.becomeActive()
 
-//  host()
-  client()
+  launchConsoleObserver()
 
-  def client(): Unit = {
+  def launchConsoleObserver(): Unit = {
     clientIO ! ConnectAs(ObserverClient, to = Globals.serverAddress)
     StdIn.readLine()
-    clientIO ! ListAllRoomsRequest
+    clientIO ! ListAllRoomsRequest(rooms => println(rooms))
     val port = StdIn.readLine("input port").toInt
     clientIO ! Subscribe(new InetSocketAddress("127.0.0.1", port))
-  }
-
-  def host(): Unit = {
-    clientIO ! ConnectAs(RoomHostClient, to = Globals.serverAddress)
-    StdIn.readLine()
-    clientIO ! CreateRoom
-    val field = new Field
-    while (true) {
-      StdIn.readLine("enter to make turn")
-      clientIO ! TurnMade(field.cells, field.score)
-    }
   }
 
 }

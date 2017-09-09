@@ -4,6 +4,9 @@ import javax.swing.event.ListSelectionEvent
 import akka.actor.ActorRef
 import game.Globals
 import game.Implicits.{Function2ActionListener, Function2ListSelectionListener}
+import game.net.ClientIO.ConnectAs
+import game.net.model.ConnectionType.ObserverClient
+import game.net.model.GameObserverMessages.ListAllRoomsRequest
 import game.net.model.Player
 import game.swing.LobbyPanel
 
@@ -31,8 +34,9 @@ class LobbyController extends Controller {
   }
 
   override def initializeModel(): Unit = {
-//    val lobbyClientProps = LobbyClient.props(Globals.serverAddress, displayPlayersOnPanel)
-//    lobbyClient = Globals.system.actorOf(lobbyClientProps)
+    Globals.clientIO ! ConnectAs(ObserverClient, to = Globals.serverAddress)
+    Thread.sleep(100)
+    Globals.clientIO ! ListAllRoomsRequest
   }
 
   def displayPlayersOnPanel(players: Seq[Player]): Unit = {

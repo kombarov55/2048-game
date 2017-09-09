@@ -4,8 +4,12 @@ import java.awt.Color
 import javax.swing.JButton
 
 import game.Globals
+import game.Globals.clientIO
 import game.Implicits.Function2ActionListener
 import game.model.{Cell, Command, Field}
+import game.net.ClientIO.ConnectAs
+import game.net.model.ConnectionType.RoomHostClient
+import game.net.model.RoomHostMessages.{CreateRoom, TurnMade}
 import game.swing.{GamePanel, KeyboardListener}
 
 class GameController extends Controller {
@@ -24,13 +28,24 @@ class GameController extends Controller {
     }
     renderCells(Globals.field.rows.flatten.toSeq)
     panel.scoreLabel.setText(Globals.field.score.toString)
+
+    clientIO ! ConnectAs(RoomHostClient, to = Globals.serverAddress)
+    Thread.sleep(100)
+    clientIO ! CreateRoom
   }
 
   def proceedCommand(command: Command): Unit = {
     Globals.field.makeTurn(command)
 
     panel.scoreLabel.setText(Globals.field.score.toString)
-    renderCells(Globals.field.rows.flatten.toSeq)
+
+    val cells = Globals.field.cells
+    val score = Globals.field.score
+
+    renderCells(cells)
+    panel.scoreLabel.setText(score.toString)
+
+    clientIO ! TurnMade(cells, score)
 
     if (Globals.field.isGameOver) {
       (new GameoverController).becomeActive()
