@@ -11,7 +11,7 @@ import game.net.model.RoomHostMessages.TurnMade
 trait ObserverClientBehavior extends Actor with SocketHandler with IOBehavior {
 
 //  var onSubscribed: () => Unit
-  var onTurnMade: (Seq[Cell], Int) => Unit
+  var onTurnMade: (Seq[Cell], Int) => Unit = _
 
   var allRoomsResponseCallback: (Seq[InetSocketAddress]) => Unit = _
 
@@ -26,8 +26,9 @@ trait ObserverClientBehavior extends Actor with SocketHandler with IOBehavior {
       allRoomsResponseCallback(rooms)
       allRoomsResponseCallback = null
 
-    case msg @ Subscribe(_) =>
+    case msg @ Subscribe(_, onTurnMade) =>
       println("sending " + msg)
+      this.onTurnMade = onTurnMade
       sendToTheOtherEnd(msg)
 
     case Subscribed =>

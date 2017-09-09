@@ -10,12 +10,9 @@ trait ObserverServerBehavior extends Actor with SocketHandler with IOBehavior {
   def observerServerBehavior: Receive = ioBehavior orElse {
 
     case ListAllRoomsRequest =>
-      println("sending all rooms ")
       sendToTheOtherEnd(ListAllRoomsResponse(ServerGlobals.rooms.map { room => room.hostAddress }))
 
-    case Subscribe(hostAddress) =>
-      println("Subscribe received")
-
+    case Subscribe(hostAddress, _) =>
       var roomFound = false
 
       val optionRoom = ServerGlobals.rooms.find { room => room.hostAddress == hostAddress }

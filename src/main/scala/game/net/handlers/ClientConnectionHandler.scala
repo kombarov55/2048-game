@@ -3,7 +3,6 @@ package game.net.handlers
 import java.net.InetSocketAddress
 
 import akka.actor.{Actor, ActorRef}
-import game.model.Cell
 import game.net.handlers.ServerConnectionHandler.SetConnectionType
 import game.net.handlers.handlerbehavior.client.{LobbyClientBehavior, ObserverClientBehavior, RoomHostClientBehavior}
 import game.net.handlers.handlerbehavior.{IOBehavior, SocketHandler}
@@ -17,13 +16,6 @@ class ClientConnectionHandler(val connection: ActorRef,
 
   override var onPlayersReceived: (Seq[Player]) => Unit = _
 
-
-  def onTurnMadee(cells: Seq[Cell], score: Int) = {
-    println("changes: " + cells)
-    println("score: " + score)
-  }
-
-  override var onTurnMade: (Seq[Cell], Int) => Unit = onTurnMadee
 
   override def receive: Receive = ioBehavior orElse {
     case SetConnectionType(connectionType) => connectionType match {
