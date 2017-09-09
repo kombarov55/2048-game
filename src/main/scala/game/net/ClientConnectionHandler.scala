@@ -6,7 +6,8 @@ import akka.actor.{Actor, ActorRef}
 import game.model.Cell
 import game.net.ConnectionType.{ClientLobby, ObserverClient, ObserverServer, RoomHostClient, RoomHostServer, ServerLobby}
 import game.net.ServerConnectionHandler.SetConnectionType
-import game.net.handlerbehavior.{IOBehavior, LobbyClientBehavior, ObserverClientBehavior, RoomHostClientBehavior, SocketHandler}
+import game.net.handlerbehavior.client.{LobbyClientBehavior, ObserverClientBehavior, RoomHostClientBehavior}
+import game.net.handlerbehavior.{IOBehavior, SocketHandler}
 
 class ClientConnectionHandler(val connection: ActorRef,
                               val remoteAddress: InetSocketAddress,

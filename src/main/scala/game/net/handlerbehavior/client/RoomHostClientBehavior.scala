@@ -1,7 +1,8 @@
-package game.net.handlerbehavior
+package game.net.handlerbehavior.client
 
 import akka.actor.SupervisorStrategy.Stop
 import game.net.RoomHostMessages.{CreateRoom, RoomCreated, TurnMade}
+import game.net.handlerbehavior.{IOBehavior, SocketHandler}
 
 trait RoomHostClientBehavior extends SocketHandler with IOBehavior {
 

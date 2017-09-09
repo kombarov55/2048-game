@@ -1,8 +1,9 @@
-package game.net.handlerbehavior
+package game.net.handlerbehavior.server
 
 import akka.actor.Actor
 import game.net.RoomHostMessages.{CreateRoom, RoomCreated, TurnMade}
 import game.net.ServerConnectionHandler.SendToTheOtherEnd
+import game.net.handlerbehavior.IOBehavior
 import game.net.{Room, ServerGlobals}
 
 trait RoomHostServerBehavior extends Actor with IOBehavior {
