@@ -8,8 +8,12 @@ object ConnectionType {
 
   case class ClientLobby(onPlayersReceived: (Seq[Player]) => Unit) extends ConnectionType with Serializable
 
-  object GameMonitoring extends ConnectionType with Serializable
+  object RoomHostServer extends ConnectionType with Serializable
 
-  object RoomHost extends ConnectionType with Serializable
+  object RoomHostClient extends ConnectionType with Serializable
+
+  object ObserverClient extends ConnectionType with Serializable
+
+  object ObserverServer extends ConnectionType with Serializable
 
 }

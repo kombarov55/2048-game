@@ -8,6 +8,9 @@ import akka.io.{IO, Tcp}
 import game.Globals
 import game.net.ServerGlobals.lobbyHandlers
 
+import scala.collection.mutable
+import scala.util.Random
+
 class ServerGlobals extends Actor {
 
   override def preStart(): Unit = {
@@ -20,7 +23,7 @@ class ServerGlobals extends Actor {
 
     case Connected(remote, local) =>
       val connection = sender()
-      val handler = context.actorOf(Props(new ServerConnectionHandler(remote, local, connection)), name = "serverHandler")
+      val handler = context.actorOf(Props(new ServerConnectionHandler(remote, local, connection)), name = "serverHandler" + Random.nextInt())
       lobbyHandlers = handler :: lobbyHandlers
       connection ! Register(handler)
   }
@@ -31,6 +34,6 @@ object ServerGlobals {
   var lobbyHandlers = List.empty[ActorRef]
   var players = List.empty[Player]
 
-  var rooms = List.empty[Room]
+  var rooms = mutable.Buffer.empty[Room]
 
 }

@@ -3,36 +3,50 @@ package game.net
 import java.net.InetSocketAddress
 
 import akka.actor.{Actor, ActorRef}
-import game.net.ConnectionType.{ClientLobby, RoomHost, ServerLobby}
+import game.model.Cell
+import game.net.ConnectionType.{ClientLobby, ObserverClient, ObserverServer, RoomHostClient, RoomHostServer, ServerLobby}
 import game.net.ServerConnectionHandler.SetConnectionType
-import game.net.handlerbehavior.{IOBehavior, LobbyClientBehavior, RoomHostClientBehavior, SocketHandler}
+import game.net.handlerbehavior.{IOBehavior, LobbyClientBehavior, ObserverClientBehavior, RoomHostClientBehavior, SocketHandler}
 
 class ClientConnectionHandler(val connection: ActorRef,
                               val remoteAddress: InetSocketAddress,
                               val localAddress: InetSocketAddress)
-  extends Actor with SocketHandler with IOBehavior with LobbyClientBehavior with RoomHostClientBehavior {
+  extends Actor with SocketHandler with IOBehavior with LobbyClientBehavior with RoomHostClientBehavior with ObserverClientBehavior {
 
   override var onPlayersReceived: (Seq[Player]) => Unit = _
+
+
+  def onTurnMadee(cells: Seq[Cell], score: Int) = {
+    println("changes: " + cells)
+    println("score: " + score)
+  }
+
+  override var onTurnMade: (Seq[Cell], Int) => Unit = onTurnMadee
 
   override def receive: Receive = ioBehavior orElse {
     case SetConnectionType(connectionType) => connectionType match {
       case ClientLobby(onPlayersReceived) =>
-        println("client becoming lobby")
         sendToTheOtherEnd(SetConnectionType(ServerLobby))
         this.onPlayersReceived = onPlayersReceived
         Thread.sleep(100)
         context.become(handleLobbyClient)
 
       case ServerLobby =>
-        println("client becoming lobby")
         sendToTheOtherEnd(SetConnectionType(ServerLobby))
         Thread.sleep(100)
         context.become(handleLobbyClient)
-      case RoomHost =>
-        println("client becoming room host")
-        sendToTheOtherEnd(SetConnectionType(RoomHost))
+
+      case RoomHostClient =>
+        sendToTheOtherEnd(SetConnectionType(RoomHostServer))
         Thread.sleep(100)
         context.become(roomHostClientBehavior)
+
+      case ObserverClient =>
+        sendToTheOtherEnd(SetConnectionType(ObserverServer))
+        Thread.sleep(100)
+        context.become(observerClientBehavior)
+
+
     }
 
   }

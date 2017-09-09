@@ -2,6 +2,7 @@ package game.net.handlerbehavior
 
 import akka.actor.Actor
 import game.net.RoomHostMessages.{CreateRoom, RoomCreated, TurnMade}
+import game.net.ServerConnectionHandler.SendToTheOtherEnd
 import game.net.{Room, ServerGlobals}
 
 trait RoomHostServerBehavior extends Actor with IOBehavior {
@@ -10,14 +11,17 @@ trait RoomHostServerBehavior extends Actor with IOBehavior {
 
   def roomHostBehavior: Receive = ioBehavior orElse {
     case CreateRoom =>
-      myRoom = Room(connection)
-      ServerGlobals.rooms = myRoom :: ServerGlobals.rooms
+      myRoom = Room(remoteAddress, connection)
+      ServerGlobals.rooms += myRoom
       sendToTheOtherEnd(RoomCreated)
+      println(ServerGlobals.rooms)
 
     case TurnMade(cells, score) =>
-      println("broadcasting turn")
-      println("changed cells: " + cells)
-      println("new score: " + score)
+      println("broadcasting " + cells, score)
+      for (observer <- myRoom.observers) {
+        observer ! SendToTheOtherEnd(TurnMade(cells, score))
+      }
+      println("broadcasted turn to " + myRoom.observers)
   }
 
 }
