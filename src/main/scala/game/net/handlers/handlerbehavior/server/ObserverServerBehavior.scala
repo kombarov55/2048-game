@@ -1,9 +1,9 @@
-package game.net.handlerbehavior.server
+package game.net.handlers.handlerbehavior.server
 
 import akka.actor.Actor
-import game.net.GameObserverMessages.{FailedToSubscribe, ListAllRoomsRequest, ListAllRoomsResponse, Subscribe, Subscribed}
 import game.net.ServerGlobals
-import game.net.handlerbehavior.{IOBehavior, SocketHandler}
+import game.net.handlers.handlerbehavior.{IOBehavior, SocketHandler}
+import game.net.model.GameObserverMessages.{FailedToSubscribe, ListAllRoomsRequest, ListAllRoomsResponse, Subscribe, Subscribed}
 
 trait ObserverServerBehavior extends Actor with SocketHandler with IOBehavior {
 

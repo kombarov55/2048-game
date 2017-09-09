@@ -8,7 +8,9 @@ import akka.io.Tcp.{Connect, Connected, Register}
 import akka.io.{IO, Tcp}
 import game.Globals
 import game.net.ClientIO.{ConnectAs, Disconnect}
-import game.net.ServerConnectionHandler.SetConnectionType
+import game.net.handlers.ClientConnectionHandler
+import game.net.handlers.ServerConnectionHandler.SetConnectionType
+import game.net.model.ConnectionType
 
 import scala.collection.mutable
 

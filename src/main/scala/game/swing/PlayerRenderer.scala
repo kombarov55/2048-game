@@ -3,7 +3,7 @@ package game.swing
 import java.awt.Component
 import javax.swing.{JLabel, JList, ListCellRenderer}
 
-import game.net.Player
+import game.net.model.Player
 
 class PlayerRenderer extends ListCellRenderer[Player] {
   override def getListCellRendererComponent(list: JList[_ <: Player], value: Player, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component = {

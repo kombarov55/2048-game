@@ -1,4 +1,4 @@
-package game.net.handlerbehavior
+package game.net.handlers.handlerbehavior
 
 import java.net.InetSocketAddress
 

@@ -4,7 +4,7 @@ import java.awt.Font
 import javax.swing.border.TitledBorder
 import javax.swing.{BorderFactory, DefaultListModel, JButton, JList}
 
-import game.net.Player
+import game.net.model.Player
 
 //  Это можно переписать по border-layout
 class LobbyPanel extends Panel {

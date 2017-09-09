@@ -4,7 +4,7 @@ import javax.swing.event.ListSelectionEvent
 import akka.actor.ActorRef
 import game.Globals
 import game.Implicits.{Function2ActionListener, Function2ListSelectionListener}
-import game.net.Player
+import game.net.model.Player
 import game.swing.LobbyPanel
 
 class LobbyController extends Controller {

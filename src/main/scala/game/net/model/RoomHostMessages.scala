@@ -1,4 +1,4 @@
-package game.net
+package game.net.model
 
 import java.io.Serializable
 

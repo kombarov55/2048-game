@@ -1,10 +1,10 @@
-package game.net.handlerbehavior.client
+package game.net.handlers.handlerbehavior.client
 
 import akka.actor.Actor
 import game.model.Cell
-import game.net.GameObserverMessages.{FailedToSubscribe, ListAllRoomsRequest, ListAllRoomsResponse, Subscribe, Subscribed}
-import game.net.RoomHostMessages.TurnMade
-import game.net.handlerbehavior.{IOBehavior, SocketHandler}
+import game.net.handlers.handlerbehavior.{IOBehavior, SocketHandler}
+import game.net.model.GameObserverMessages.{FailedToSubscribe, ListAllRoomsRequest, ListAllRoomsResponse, Subscribe, Subscribed}
+import game.net.model.RoomHostMessages.TurnMade
 
 trait ObserverClientBehavior extends Actor with SocketHandler with IOBehavior {
 

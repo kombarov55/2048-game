@@ -1,12 +1,12 @@
-package game.net.handlerbehavior.server
+package game.net.handlers.handlerbehavior.server
 
 import akka.actor.Actor
 import akka.io.Tcp.{ErrorClosed, PeerClosed}
-import game.net.LobbyMessages.{AddPlayer, AllPlayers}
-import game.net.Player
-import game.net.ServerConnectionHandler.SendToTheOtherEnd
 import game.net.ServerGlobals.{lobbyHandlers, players}
-import game.net.handlerbehavior.IOBehavior
+import game.net.handlers.ServerConnectionHandler.SendToTheOtherEnd
+import game.net.handlers.handlerbehavior.IOBehavior
+import game.net.model.LobbyMessages.{AddPlayer, AllPlayers}
+import game.net.model.Player
 
 trait LobbyServerBehavior extends Actor with IOBehavior {
 

@@ -1,11 +1,11 @@
-package game.net.handlerbehavior.client
+package game.net.handlers.handlerbehavior.client
 
 import akka.actor.Actor
 import akka.actor.SupervisorStrategy.Stop
 import game.Globals
-import game.net.LobbyMessages.{AddPlayer, AllPlayers}
-import game.net.Player
-import game.net.handlerbehavior.{IOBehavior, SocketHandler}
+import game.net.handlers.handlerbehavior.{IOBehavior, SocketHandler}
+import game.net.model.LobbyMessages.{AddPlayer, AllPlayers}
+import game.net.model.Player
 
 trait LobbyClientBehavior extends Actor with SocketHandler with IOBehavior {
 

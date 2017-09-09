@@ -1,13 +1,14 @@
-package game.net
+package game.net.handlers
 
 import java.net.InetSocketAddress
 
 import akka.actor.{Actor, ActorRef}
 import game.model.Cell
-import game.net.ConnectionType.{ClientLobby, ObserverClient, ObserverServer, RoomHostClient, RoomHostServer, ServerLobby}
-import game.net.ServerConnectionHandler.SetConnectionType
-import game.net.handlerbehavior.client.{LobbyClientBehavior, ObserverClientBehavior, RoomHostClientBehavior}
-import game.net.handlerbehavior.{IOBehavior, SocketHandler}
+import game.net.handlers.ServerConnectionHandler.SetConnectionType
+import game.net.handlers.handlerbehavior.client.{LobbyClientBehavior, ObserverClientBehavior, RoomHostClientBehavior}
+import game.net.handlers.handlerbehavior.{IOBehavior, SocketHandler}
+import game.net.model.ConnectionType.{ClientLobby, ObserverClient, ObserverServer, RoomHostClient, RoomHostServer, ServerLobby}
+import game.net.model.Player
 
 class ClientConnectionHandler(val connection: ActorRef,
                               val remoteAddress: InetSocketAddress,

@@ -1,10 +1,10 @@
-package game.net.handlerbehavior
+package game.net.handlers.handlerbehavior
 
 import akka.actor.Actor
 import akka.io.Tcp.{Received, Write}
 import akka.util.ByteString
 import game.net.Serializer
-import game.net.ServerConnectionHandler.SendToTheOtherEnd
+import game.net.handlers.ServerConnectionHandler.SendToTheOtherEnd
 
 trait IOBehavior extends Actor with SocketHandler {
 

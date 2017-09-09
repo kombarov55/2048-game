@@ -5,9 +5,9 @@ import java.net.InetSocketAddress
 import game.Globals.clientIO
 import game.model.Field
 import game.net.ClientIO.ConnectAs
-import game.net.ConnectionType.{ObserverClient, RoomHostClient}
-import game.net.GameObserverMessages.{ListAllRoomsRequest, Subscribe}
-import game.net.RoomHostMessages.{CreateRoom, TurnMade}
+import game.net.model.ConnectionType.{ObserverClient, RoomHostClient}
+import game.net.model.GameObserverMessages.{ListAllRoomsRequest, Subscribe}
+import game.net.model.RoomHostMessages.{CreateRoom, TurnMade}
 
 import scala.io.StdIn
 
