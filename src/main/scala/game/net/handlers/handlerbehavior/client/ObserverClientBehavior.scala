@@ -26,10 +26,10 @@ trait ObserverClientBehavior extends Actor with SocketHandler with IOBehavior {
       allRoomsResponseCallback(rooms)
       allRoomsResponseCallback = null
 
-    case msg @ Subscribe(_, onTurnMade) =>
+    case msg @ Subscribe(address, onTurnMade) =>
       println("sending " + msg)
       this.onTurnMade = onTurnMade
-      sendToTheOtherEnd(msg)
+      sendToTheOtherEnd(Subscribe(address))
 
     case Subscribed =>
       println("subscribed successfully")

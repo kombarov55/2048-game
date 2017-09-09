@@ -1,4 +1,5 @@
 package game.controllers
+
 import javax.swing.event.ListSelectionEvent
 
 import akka.actor.ActorRef
@@ -21,7 +22,7 @@ class LobbyController extends Controller {
     panel.versusButton.setEnabled(false)
 
     panel.backButton.addActionListener { () =>
-//      lobbyClient ! Stop
+      //      lobbyClient ! Stop
       MainMenuController.becomeActive()
     }
     panel.jlist.addListSelectionListener { e: ListSelectionEvent =>
@@ -29,14 +30,22 @@ class LobbyController extends Controller {
       println(s"selected $selectedPlayer")
       panel.watchButton.setEnabled(true)
       panel.versusButton.setEnabled(true)
+    }
 
+    panel.watchButton.addActionListener { () =>
+      val selectedAddress = panel.jlist.getSelectedValue.address
+      val observerView = new GameObserverController(selectedAddress)
+      observerView.becomeActive()
     }
   }
 
   override def initializeModel(): Unit = {
     Globals.clientIO ! ConnectAs(ObserverClient, to = Globals.serverAddress)
     Thread.sleep(100)
-    Globals.clientIO ! ListAllRoomsRequest
+    Globals.clientIO ! ListAllRoomsRequest(callback = { rooms =>
+      for (address <- rooms)
+        panel.playerList.addElement(Player("", address))
+    })
   }
 
   def displayPlayersOnPanel(players: Seq[Player]): Unit = {
