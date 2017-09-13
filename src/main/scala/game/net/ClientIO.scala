@@ -13,6 +13,7 @@ import game.net.handlers.ServerConnectionHandler.SetConnectionType
 import game.net.model.ConnectionType
 
 import scala.collection.mutable
+import scala.util.Random
 
 class ClientIO extends Actor {
 
@@ -26,7 +27,7 @@ class ClientIO extends Actor {
       ClientIO.RemoteAddress_ConnectionType += remoteAddress -> connectionType
     case Connected(remote, local) =>
       val connectionType = ClientIO.RemoteAddress_ConnectionType.remove(remote).get
-      currentHandler = context.actorOf(Props(new ClientConnectionHandler(sender(), remote, local)), name = "clientHandler")
+      currentHandler = context.actorOf(Props(new ClientConnectionHandler(sender(), remote, local)), name = "clientHandler" + Random.nextInt())
       sender() ! Register(currentHandler)
       currentHandler ! SetConnectionType(connectionType)
       context become forwardToHandler
